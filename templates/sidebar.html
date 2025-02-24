@@ -1,0 +1,66 @@
+<!-- templates/sidebar.html -->
+<aside id="sidebar" class="sidebar-toggle">
+    <div class="sidebar-logo">
+        <a href="#">COMP214</a>
+    </div>
+    <!-- Sidebar Navigation -->
+    <ul class="sidebar-nav p-0">
+        <li class="sidebar-header">
+            Tools And Components
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-house-door"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Login</span>
+            </a>
+        </li>
+        <li class="sidebar-header">
+            Pages
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                data-bs-target="#auth" aria-expanded="true" aria-controls="auth">
+                <span>Auth</span>
+            </a>
+            <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span>Chart</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                        <span>Register</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-chat-square-text"></i>
+                <span>Notification</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-gear"></i>
+                <span>Setting</span>
+            </a>
+        </li>
+    </ul>
+    <!-- Sidebar Navigation Ends -->
+    <div class="sidebar-footer">
+        <a href="#" class="sidebar-link">
+            <i class="bi bi-box-arrow-left"></i>
+            <span>LogOut</span>
+        </a>
+    </div>
+</aside>
