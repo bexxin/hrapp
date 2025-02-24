@@ -10,3 +10,13 @@ def index():
     # flash("Welcome To Our Website!")
     return render_template("index.html")
     # return "<h1>Hello World!</h1>"
+
+
+@app.route("/tables")
+def tables():
+    return render_template("tables.html")
+
+
+@app.route("/dashboard_chart")
+def dashboard_chart():
+    return render_template("dashboard_chart.html")

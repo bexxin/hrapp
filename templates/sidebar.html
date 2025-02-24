@@ -6,13 +6,28 @@
     <!-- Sidebar Navigation -->
     <ul class="sidebar-nav p-0">
         <li class="sidebar-header">
-            Tools And Components
+            Core Features
         </li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
+            <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                data-bs-target="#dashboard" aria-expanded="false" aria-controls="dashboard">
                 <i class="bi bi-house-door"></i>
                 <span>Dashboard</span>
             </a>
+            <ul id="dashboard" class="sidebar-dropdown list-unstyled collapse" >
+                <li class="sidebar-item">
+                    <a href="{{ url_for('dashboard_chart') }}" class="sidebar-link">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span>Chart</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{{ url_for('tables') }}" class="sidebar-link">
+                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                        <span>Tables</span>
+                    </a>
+                </li>
+            </ul>
         </li>
         <li class="sidebar-item">
             <a href="#" class="sidebar-link">
@@ -21,24 +36,25 @@
             </a>
         </li>
         <li class="sidebar-header">
-            Pages
+            Management
         </li>
         <li class="sidebar-item">
             <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-                data-bs-target="#auth" aria-expanded="true" aria-controls="auth">
-                <span>Auth</span>
+                data-bs-target="#settings" aria-expanded="false" aria-controls="settings">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
             </a>
-            <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <ul id="settings" class="sidebar-dropdown list-unstyled collapse">
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link">
-                        <i class="bi bi-graph-up-arrow"></i>
-                        <span>Chart</span>
+                        <i class="bi bi-person-gear"></i>
+                        <span>Manage Users</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link">
-                        <i class="bi bi-file-earmark-spreadsheet"></i>
-                        <span>Register</span>
+                        <i class="bi bi-person-plus"></i>
+                        <span>Add Users</span>
                     </a>
                 </li>
             </ul>
@@ -47,12 +63,6 @@
             <a href="#" class="sidebar-link">
                 <i class="bi bi-chat-square-text"></i>
                 <span>Notification</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-gear"></i>
-                <span>Setting</span>
             </a>
         </li>
     </ul>
