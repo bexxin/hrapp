@@ -1,3 +1,4 @@
+/* static/css/style.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 body {
@@ -12,14 +13,52 @@ a {
     text-decoration: none;
 }
 
-h1 {
+h1, h2, p {
     color: #FFF;
 }
 
-p {
-    color: #FFF;
+.table-container {
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    border: 1px solid #444;
+    width: 100% !important;
+    display: block !important;
 }
 
+/* Webkit scrollbar */
+.table-container::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+.table-container::-webkit-scrollbar-track {
+    background: #212529;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: #495057;
+    border-radius: 5px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #6c757d;
+}
+
+/* Firefox scrollbar */
+.table-container {
+    scrollbar-width: thin;
+    scrollbar-color: #495057 #212529;
+}
+
+.table {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+/* Style the column headers */
+.table-container .table-dark thead th {
+    background-color: #323539 !important;
+}
+
+/* Main content area */
 .main {
     min-height: 100vh;
     width: 100%;
@@ -28,6 +67,7 @@ p {
     transition: all 0.35s ease-in-out;
 }
 
+/* Sidebar */
 #sidebar {
     max-width: 264px;
     min-width: 264px;
@@ -41,6 +81,7 @@ p {
     margin-left: -264px;
 }
 
+/* Sidebar toggler buttons */
 .toggler-btn {
     background-color: transparent;
     cursor: pointer;
@@ -49,20 +90,19 @@ p {
 
 .toggler-btn .navbar-toggler-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23FFFFFF' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-    width: 1.5rem; /* Matches typical Bootstrap size */
+    width: 1.5rem;
     height: 1.5rem;
 }
 
-/* New mobile-only close button */
 .mobile-toggle-btn {
-    display: none; /* Hidden by default on desktop */
+    display: none;
     background-color: transparent;
     cursor: pointer;
     border: 0;
     position: fixed;
     top: 1rem;
     right: 1rem;
-    z-index: 1001; /* Above sidebar */
+    z-index: 1001;
     padding: 0.5rem;
 }
 
@@ -72,6 +112,7 @@ p {
     height: 1.5rem;
 }
 
+/* Sidebar elements */
 .navbar {
     padding: 1.15rem 1.5rem;
 }
@@ -99,10 +140,10 @@ p {
 
 .sidebar-link i.bi,
 .sidebar-link i.lni {
-    margin-right: 0.5rem; /* Space between icon and text */
-    font-size: 1rem; /* Consistent size */
-    color: #FFF; /* White to match text */
-    vertical-align: middle; /* Align with text */
+    margin-right: 0.5rem;
+    font-size: 1rem;
+    color: #FFF;
+    vertical-align: middle;
 }
 
 a.sidebar-link {
@@ -135,23 +176,55 @@ a.sidebar-link:hover {
     transition: all .2s ease-out;
 }
 
-/* Add this near your other sidebar styles */
 .sidebar-dropdown .sidebar-item {
-    padding-left: 1.5rem; /* Adds a small left indent */
+    padding-left: 1.5rem;
 }
 
-/* Screen size less than 768px */
+/* Accordion styling for tables */
+.accordion-item {
+    background-color: #212529; /* Matches table-dark */
+    border: 1px solid #444; /* Matches table-container */
+}
 
-@media (max-width:768px) {
+.accordion-button {
+    background-color: #212529;
+    color: #FFF;
+    padding: 0.625rem 1.625rem;
+}
 
+.accordion-button:not(.collapsed) {
+    background-color: #323539; /* Matches thead when expanded */
+    color: #FFF;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+/* White arrow */
+.accordion-button::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+}
+
+.accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+}
+
+/* Accordion body */
+.accordion-body {
+    padding: 0; /* Snug fit for table */
+}
+
+/* Media queries */
+@media (max-width: 768px) {
     #sidebar {
-        max-width: 100%; /* Fullscreen when visible */
-        min-width: 100%; /* Fullscreen when visible */
-        width: 100%; /* Explicitly set width */
+        max-width: 100%;
+        min-width: 100%;
+        width: 100%;
     }
 
     #sidebar.collapsed {
-        margin-left: -100%; /* Fully off-screen on mobile */
+        margin-left: -100%;
     }
 
     #sidebar:not(.collapsed) {
@@ -159,11 +232,10 @@ a.sidebar-link:hover {
     }
 
     .main {
-        margin-left: 0; /* No offset on mobile */
+        margin-left: 0;
         width: 100%;
     }
 
-    /* Show mobile close button when sidebar is open */
     #sidebar:not(.collapsed) ~ .mobile-toggle-btn {
         display: block;
     }

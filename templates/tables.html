@@ -1,28 +1,94 @@
 <!-- templates/tables.html -->
 <h1>Tables Page</h1>
-{% if error %}
-    <p style="color: red;">{{ error }}</p>
-{% else %}
-    {% if table_data and column_names %}
-        <table class="table table-dark">
-            <thead>
-                <tr>
-                    {% for name in column_names %}
-                        <th>{{ name }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in table_data %}
-                    <tr>
-                        {% for value in row %}
-                            <td>{{ value }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No data available.</p>
-    {% endif %}
-{% endif %}
+
+<!-- Employees Accordion -->
+<div class="accordion mb-2" id="employeesAccordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingEmployees">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#collapseEmployees" aria-expanded="true" 
+                    aria-controls="collapseEmployees">
+                <span>Employees</span>
+            </button>
+        </h2>
+        <div id="collapseEmployees" class="accordion-collapse collapse show" 
+                aria-labelledby="headingEmployees">
+            <div class="accordion-body">
+                {% if emp_error %}
+                    <p style="color: red;">{{ emp_error }}</p>
+                {% else %}
+                    {% if emp_data and emp_columns %}
+                        <div class="table-container">
+                            <table class="table table-dark">
+                                <thead>
+                                    <tr>
+                                        {% for name in emp_columns %}
+                                            <th>{{ name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in emp_data %}
+                                        <tr>
+                                            {% for value in row %}
+                                                <td>{{ value }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>No employee data available.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Departments Accordion -->
+<div class="accordion mb-2" id="departmentsAccordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingDepartments">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#collapseDepartments" aria-expanded="true" 
+                    aria-controls="collapseDepartments">
+                <span>Departments</span>
+            </button>
+        </h2>
+        <div id="collapseDepartments" class="accordion-collapse collapse show" 
+                aria-labelledby="headingDepartments">
+            <div class="accordion-body">
+                {% if dept_error %}
+                    <p style="color: red;">{{ dept_error }}</p>
+                {% else %}
+                    {% if dept_data and dept_columns %}
+                        <div class="table-container">
+                            <table class="table table-dark">
+                                <thead>
+                                    <tr>
+                                        {% for name in dept_columns %}
+                                            <th>{{ name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in dept_data %}
+                                        <tr>
+                                            {% for value in row %}
+                                                <td>{{ value }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>No department data available.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

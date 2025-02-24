@@ -1,6 +1,6 @@
 # app.py
 from flask import Flask, render_template
-from database import fetch_employees
+from database import fetch_employees, fetch_departments
 
 # Create a Flask Instance
 app = Flask(__name__)
@@ -13,10 +13,17 @@ def index():
 
 @app.route("/tables")
 def tables():
-    table_data, column_names, error = fetch_employees()
-    if error:
-        return render_template("tables.html", table_data=[], column_names=column_names, error=error)
-    return render_template("tables.html", table_data=table_data, column_names=column_names)
+    emp_data, emp_columns, emp_error = fetch_employees()
+    dept_data, dept_columns, dept_error = fetch_departments()
+    return render_template(
+        "tables.html",
+        emp_data=emp_data,
+        emp_columns=emp_columns,
+        emp_error=emp_error,
+        dept_data=dept_data,
+        dept_columns=dept_columns,
+        dept_error=dept_error,
+    )
 
 
 @app.route("/dashboard_chart")
