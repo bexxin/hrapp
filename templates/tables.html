@@ -1,3 +1,28 @@
-
+<!-- templates/tables.html -->
 <h1>Tables Page</h1>
-<p>This is the tables content loaded dynamically.</p>
+{% if error %}
+    <p style="color: red;">{{ error }}</p>
+{% else %}
+    {% if table_data and column_names %}
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    {% for name in column_names %}
+                        <th>{{ name }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in table_data %}
+                    <tr>
+                        {% for value in row %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No data available.</p>
+    {% endif %}
+{% endif %}

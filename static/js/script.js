@@ -42,3 +42,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Optional: Load initial content (e.g., tables) on page load
     loadContent('{{ url_for("tables") }}');
 });
+
