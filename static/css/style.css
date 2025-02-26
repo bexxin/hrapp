@@ -195,25 +195,41 @@ body.light-mode {
     border: 1px solid #DEE2E6;
 }
 
+/* Accordion header */
 .accordion-button {
-    background-color: #212529;
+    background-color: #4a4c4f;
+    /* Always #4a4c4f in dark mode */
     color: #FFF;
     padding: 0.625rem 1.625rem;
+    border-radius: 0.375rem !important;
+    /* Rounded corners (6px) */
 }
 
 .accordion-button:not(.collapsed) {
-    background-color: #323539;
+    background-color: #4a4c4f;
+    /* Keep #4a4c4f when open */
     color: #FFF;
+    /* White font when open */
+    border-radius: 0.375rem !important;
+    /* Maintain rounded corners when open */
 }
 
 .light-mode .accordion-button {
-    background-color: #E9ECEF !important;
+    background-color: #dee2e6 !important;
+    /* Always #dee2e6 in light mode */
     color: #212529 !important;
+    /* Black font in light mode */
+    border-radius: 0.375rem !important;
+    /* Rounded corners in light mode */
 }
 
 .light-mode .accordion-button:not(.collapsed) {
-    background-color: #DEE2E6 !important;
+    background-color: #dee2e6 !important;
+    /* Keep #dee2e6 when open */
     color: #212529 !important;
+    /* Black font when open */
+    border-radius: 0.375rem !important;
+    /* Maintain rounded corners when open */
 }
 
 .accordion-button:focus {
@@ -467,24 +483,22 @@ a.sidebar-link:hover {
 
 /* Increase vertical space between label and previous item */
 #employeeForm .form-label {
+    color: #FFF;
     margin-top: 0.75rem;
-    /* Increased from default 0 to 0.75rem (12px) */
     margin-bottom: 0.25rem;
-    /* Default spacing below label */
+}
+
+.light-mode #employeeForm .form-label {
+    color: #212529 !important;
 }
 
 /* Legend styling */
 #employeeForm legend {
     background-color: #4a4c4f;
-    /* Dark mode background */
     color: #FFF;
-    /* White font */
     padding: 0.25rem 0.5rem;
-    /* Add some padding for readability */
     margin-bottom: 0.5rem;
-    /* Space below legend */
     font-size: 1.5rem;
-    /* Match default font size */
 }
 
 .light-mode #employeeForm legend {
@@ -492,6 +506,24 @@ a.sidebar-link:hover {
     /* Light mode background */
     color: #212529;
     /* Black font */
+}
+
+/* Accordion body styling */
+#employeeForm .accordion-body {
+    background-color: #323539;
+    padding-left: 1.5rem;
+    /* Increased left margin (24px) */
+    padding-right: 0.75rem;
+    /* Keep some right padding */
+    padding-top: 0.75rem;
+    /* Consistent top padding */
+    padding-bottom: 1.5rem;
+    /* Consistent bottom padding */
+}
+
+.light-mode #employeeForm .accordion-body {
+    background-color: #FFF !important;
+    /* Light mode background */
 }
 
 .container-fluid {

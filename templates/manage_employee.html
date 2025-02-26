@@ -28,91 +28,116 @@
                     </tbody>
                 </table>
             </div>
+            <br/>
             <div id="employeeForm" class="mt-3" style="display: none;">
-                <br/>
-                <form>
+                <h3>Employee Details</h3>
+                <div class="accordion accordion-flush" id="employeeAccordion">
                     <!-- Employee Group -->
-                    <fieldset class="mb-3">
-                        <legend>Employee:</legend>
-                        <div class="row tight-horizontal">
-                            <div class="fixed-id">
-                                <label class="form-label" for="ID">ID:</label>
-                                <input type="text" class="form-control short-input" id="ID" readonly>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label" for="First_Name">First Name:</label>
-                                <input type="text" class="form-control" id="First_Name" readonly>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label" for="Last_Name">Last Name:</label>
-                                <input type="text" class="form-control" id="Last_Name" readonly>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label" for="Email">Email:</label>
-                                <input type="text" class="form-control" id="Email" readonly>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingEmployee">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmployee" aria-expanded="true" aria-controls="collapseEmployee">
+                                Employee
+                            </button>
+                        </h2>
+                        <div id="collapseEmployee" class="accordion-collapse collapse show" aria-labelledby="headingEmployee">
+                            <div class="accordion-body">
+                                <div class="row tight-horizontal">
+                                    <div class="fixed-id">
+                                        <label class="form-label" for="ID">ID:</label>
+                                        <input type="text" class="form-control short-input" id="ID" readonly>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="First_Name">First Name:</label>
+                                        <input type="text" class="form-control" id="First_Name" readonly>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="Last_Name">Last Name:</label>
+                                        <input type="text" class="form-control" id="Last_Name" readonly>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="Email">Email:</label>
+                                        <input type="text" class="form-control" id="Email" readonly>
+                                    </div>
+                                </div>
+                                <div class="row tight-horizontal">
+                                    <div class="fixed-id"></div> <!-- Empty spacer -->
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="Phone_Number">Phone:</label>
+                                        <input type="text" class="form-control" id="Phone_Number" readonly>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="Hire_Date">Hire Date:</label>
+                                        <input type="text" class="form-control" id="Hire_Date" readonly>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="Salary">Salary:</label>
+                                        <input type="text" class="form-control" id="Salary" readonly>
+                                    </div>
+                                </div>
+                                <div class="row tight-horizontal align-items-start">
+                                    <div class="fixed-id">
+                                        <label class="form-label" for="Job_ID">Job ID:</label>
+                                        <input type="text" class="form-control short-input" id="Job_ID" readonly>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <label class="form-label" for="Job_Title">Job Title:</label>
+                                        <input type="text" class="form-control" id="Job_Title" readonly>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="row tight-horizontal">
-                            <div class="fixed-id"></div> <!-- Empty spacer -->
-                            <div class="col-md-3">
-                                <label class="form-label" for="Phone_Number">Phone:</label>
-                                <input type="text" class="form-control" id="Phone_Number" readonly>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label" for="Hire_Date">Hire Date:</label>
-                                <input type="text" class="form-control" id="Hire_Date" readonly>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label" for="Salary">Salary:</label>
-                                <input type="text" class="form-control" id="Salary" readonly>
-                            </div>
-                        </div>
-                        <div class="row tight-horizontal align-items-start">
-                            <div class="fixed-id">
-                                <label class="form-label" for="Job_ID">Job ID:</label>
-                                <input type="text" class="form-control short-input" id="Job_ID" readonly>
-                            </div>
-                            <div class="col-md-9">
-                                <label class="form-label" for="Job_Title">Job Title:</label>
-                                <input type="text" class="form-control" id="Job_Title" readonly>
-                            </div>
-                        </div>
-                    </fieldset>
+                    </div>
 
                     <!-- Manager Group -->
-                    <fieldset class="mb-3">
-                        <legend>Manager:</legend>
-                        <div class="row tight-horizontal">
-                            <div class="fixed-id">
-                                <label class="form-label" for="Manager_Employee_ID">Employee ID:</label>
-                                <input type="text" class="form-control short-input" id="Manager_Employee_ID" readonly>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label" for="Manager_First_Name">First Name:</label>
-                                <input type="text" class="form-control" id="Manager_First_Name" readonly>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label" for="Manager_Last_Name">Last Name:</label>
-                                <input type="text" class="form-control" id="Manager_Last_Name" readonly>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingManager">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManager" aria-expanded="false" aria-controls="collapseManager">
+                                Manager
+                            </button>
+                        </h2>
+                        <div id="collapseManager" class="accordion-collapse collapse" aria-labelledby="headingManager">
+                            <div class="accordion-body">
+                                <div class="row tight-horizontal">
+                                    <div class="fixed-id">
+                                        <label class="form-label" for="Manager_Employee_ID">Employee ID:</label>
+                                        <input type="text" class="form-control short-input" id="Manager_Employee_ID" readonly>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="Manager_First_Name">First Name:</label>
+                                        <input type="text" class="form-control" id="Manager_First_Name" readonly>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="Manager_Last_Name">Last Name:</label>
+                                        <input type="text" class="form-control" id="Manager_Last_Name" readonly>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </fieldset>
+                    </div>
 
                     <!-- Department Group -->
-                    <fieldset class="mb-3">
-                        <legend>Department:</legend>
-                        <div class="row tight-horizontal">
-                            <div class="fixed-id">
-                                <label class="form-label" for="Department_ID">Department ID:</label>
-                                <input type="text" class="form-control short-input" id="Department_ID" readonly>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label" for="Department_Name">Department Name:</label>
-                                <input type="text" class="form-control" id="Department_Name" readonly>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingDepartment">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDepartment" aria-expanded="false" aria-controls="collapseDepartment">
+                                Department
+                            </button>
+                        </h2>
+                        <div id="collapseDepartment" class="accordion-collapse collapse" aria-labelledby="headingDepartment" >
+                            <div class="accordion-body">
+                                <div class="row tight-horizontal">
+                                    <div class="fixed-id">
+                                        <label class="form-label" for="Department_ID">Department ID:</label>
+                                        <input type="text" class="form-control short-input" id="Department_ID" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label" for="Department_Name">Department Name:</label>
+                                        <input type="text" class="form-control" id="Department_Name" readonly>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </fieldset>
-                </form>
+                    </div>
+                </div>
             </div>
         {% else %}
             <p>No employee data available.</p>

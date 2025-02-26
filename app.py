@@ -56,6 +56,16 @@ def manage_employee():
     )
 
 
+@app.route("/new_job")
+def new_job():
+    return render_template("new_job.html")
+
+
+@app.route("/manage_job")
+def manage_job():
+    return render_template("manage_job.html")
+
+
 @app.route("/dashboard_chart")
 def dashboard_chart():
     return render_template("dashboard_chart.html")

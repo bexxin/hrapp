@@ -39,7 +39,7 @@
                 <li class="sidebar-item">
                     <a href="{{ url_for('hire_employee') }}" class="sidebar-link">
                         <i class="bi bi-person-plus"></i>
-                        <span>Hire</span>
+                        <span>Hire Employees</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -51,10 +51,25 @@
             </ul>
         </li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-box-arrow-in-right"></i>
-                <span>Login</span>
+            <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                data-bs-target="#jobs" aria-expanded="false" aria-controls="jobs">
+                <i class="bi bi-people"></i>
+                <span>Jobs</span>
             </a>
+            <ul id="jobs" class="sidebar-dropdown list-unstyled collapse">
+                <li class="sidebar-item">
+                    <a href="{{ url_for('new_job') }}" class="sidebar-link">
+                        <i class="bi bi-person-plus"></i>
+                        <span>New Jobs</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{{ url_for('manage_job') }}" class="sidebar-link">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Manage Jobs</span>
+                    </a>
+                </li>
+            </ul>
         </li>
         <li class="sidebar-header">
             Management
