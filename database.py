@@ -48,7 +48,7 @@ def fetch_employees():
         connection = get_db_connection()
         cursor = connection.cursor()
         query = """
-            SELECT e.EMPLOYEE_ID, e.FIRST_NAME, e.LAST_NAME, e.EMAIL,
+            SELECT e.EMPLOYEE_ID as ID, e.FIRST_NAME as "FIRST NAME", e.LAST_NAME as "LAST NAME", e.EMAIL,
                     e.PHONE_NUMBER, e.HIRE_DATE, e.JOB_ID, e.SALARY,
                     e.COMMISSION_PCT, e.MANAGER_ID, e.DEPARTMENT_ID
             FROM HR_EMPLOYEES e

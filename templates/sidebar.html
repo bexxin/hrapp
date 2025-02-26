@@ -14,7 +14,7 @@
                 <i class="bi bi-house-door"></i>
                 <span>Dashboard</span>
             </a>
-            <ul id="dashboard" class="sidebar-dropdown list-unstyled collapse" >
+            <ul id="dashboard" class="sidebar-dropdown list-unstyled collapse">
                 <li class="sidebar-item">
                     <a href="{{ url_for('dashboard_chart') }}" class="sidebar-link">
                         <i class="bi bi-graph-up-arrow"></i>
@@ -25,6 +25,27 @@
                     <a href="{{ url_for('tables') }}" class="sidebar-link">
                         <i class="bi bi-file-earmark-spreadsheet"></i>
                         <span>Tables</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                data-bs-target="#employees" aria-expanded="false" aria-controls="employees">
+                <i class="bi bi-people"></i>
+                <span>Employees</span>
+            </a>
+            <ul id="employees" class="sidebar-dropdown list-unstyled collapse">
+                <li class="sidebar-item">
+                    <a href="{{ url_for('hire_employee') }}" class="sidebar-link">
+                        <i class="bi bi-person-plus"></i>
+                        <span>Hire</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{{ url_for('manage_employee') }}" class="sidebar-link">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Manage Employees</span>
                     </a>
                 </li>
             </ul>

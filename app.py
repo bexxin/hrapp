@@ -26,6 +26,22 @@ def tables():
     )
 
 
+@app.route("/hire_employee")
+def hire_employee():
+    return render_template("hire_employee.html")
+
+
+@app.route("/manage_employee")
+def manage_employee():
+    emp_data, emp_columns, emp_error = fetch_employees()
+    return render_template(
+        "manage_employee.html",
+        emp_data=emp_data,
+        emp_columns=emp_columns,
+        emp_error=emp_error,
+    )
+
+
 @app.route("/dashboard_chart")
 def dashboard_chart():
     return render_template("dashboard_chart.html")
