@@ -89,3 +89,42 @@ def fetch_departments():
             [],
             str(error),
         )
+
+
+def fetch_manage_employees():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        query = """
+            SELECT
+                e.employee_id AS id,
+                e.first_name  AS "FIRST NAME",
+                e.last_name   AS "LAST NAME",
+                e.email,
+                e.phone_number,
+                e.hire_date,
+                e.job_id,
+                e.salary,
+                e.commission_pct,
+                e.manager_id,
+                e.department_id,
+                j.job_title,
+                d.department_name
+            FROM
+                    hr_employees e
+                JOIN hr_jobs        j ON j.job_id = e.job_id
+                JOIN hr_departments d ON d.department_id = e.department_id
+        """
+        cursor.execute(query)
+        table_data = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+        cursor.close()
+        connection.close()
+        return table_data, column_names, None  # Success: error is None
+    except cx_Oracle.Error as error:
+        print(f"Database error: {error}")
+        return (
+            [],
+            [],
+            str(error),
+        )

@@ -1,9 +1,21 @@
 # app.py
+import datetime
 from flask import Flask, render_template
-from database import fetch_employees, fetch_departments
+from database import fetch_employees, fetch_departments, fetch_manage_employees
 
-# Create a Flask Instance
 app = Flask(__name__)
+
+
+def serialize_employee_data(emp_data):
+    """Convert datetime objects in emp_data to strings."""
+    serialized_data = []
+    for row in emp_data:
+        # Assuming row is a tuple with datetime at index 5 (Hire Date)
+        row_list = list(row)
+        if isinstance(row_list[5], datetime.datetime):  # Hire Date
+            row_list[5] = row_list[5].strftime("%Y-%m-%d")  # e.g., "2000-01-13"
+        serialized_data.append(row_list)
+    return serialized_data
 
 
 @app.route("/")
@@ -15,6 +27,7 @@ def index():
 def tables():
     emp_data, emp_columns, emp_error = fetch_employees()
     dept_data, dept_columns, dept_error = fetch_departments()
+    emp_data = serialize_employee_data(emp_data)  # Serialize datetime
     return render_template(
         "tables.html",
         emp_data=emp_data,
@@ -33,7 +46,8 @@ def hire_employee():
 
 @app.route("/manage_employee")
 def manage_employee():
-    emp_data, emp_columns, emp_error = fetch_employees()
+    emp_data, emp_columns, emp_error = fetch_manage_employees()
+    emp_data = serialize_employee_data(emp_data)  # Serialize datetime
     return render_template(
         "manage_employee.html",
         emp_data=emp_data,

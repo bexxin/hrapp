@@ -34,8 +34,8 @@ body {
 }
 
 #sidebar {
-    max-width: 264px;
-    min-width: 264px;
+    max-width: 275px;
+    min-width: 275px;
     transition: all 0.35s ease-in-out;
     background-color: #212529;
     display: flex;
@@ -252,7 +252,7 @@ body.light-mode {
 
 /* Sidebar styles */
 #sidebar.collapsed {
-    margin-left: -264px;
+    margin-left: -275px;
 }
 
 /* Toggler buttons */
@@ -295,9 +295,9 @@ body.light-mode {
 }
 
 /* Sidebar elements */
-.navbar {
+/* .navbar {
     padding: 1.15rem 1.5rem;
-}
+} */
 
 .sidebar-nav {
     flex: 1 1 auto;
@@ -376,10 +376,131 @@ a.sidebar-link:hover {
 #theme-toggle {
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
-    margin-right: 0.5rem; /* Adds 8px space to the right of the button */
+    margin-right: 0.5rem;
+    /* Adds 8px space to the right of the button */
+}
+
+/* static/css/style.css (relevant snippet only) */
+/* Sortable headers */
+.sortable {
+    cursor: pointer;
+    position: relative;
+}
+
+.sortable .bi-arrow-down-up {
+    margin-left: 0.25rem;
+    /* Space between text and icon */
+}
+
+.sortable.asc .bi-arrow-down-up::before {
+    content: "\f144";
+    /* Up arrow */
+    color: #FFF;
+    /* White in dark mode */
+}
+
+.sortable.desc .bi-arrow-down-up::before {
+    content: "\f13f";
+    /* Down arrow */
+    color: #FFF;
+    /* White in dark mode */
+}
+
+.light-mode .sortable.asc .bi-arrow-down-up::before,
+.light-mode .sortable.desc .bi-arrow-down-up::before {
+    color: #212529;
+    /* Black in light mode */
+}
+
+/* static/css/style.css (relevant snippet only) */
+/* Add at the end or after existing form styles */
+.short-input {
+    max-width: 140px;
+    /* Short width for ID fields */
+}
+
+/* Ensure it works in both modes */
+.light-mode .short-input {
+    max-width: 140px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Consistent with light mode shadow */
+}
+
+/* Form shadow in light mode */
+.light-mode #employeeForm {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: none !important;
+}
+
+.col-md-2 {
+    flex: 0 0 auto;
+    width: 11%;
+}
+
+/* Tight horizontal spacing for adjacent fields */
+.tight-horizontal .col-md-3,
+.tight-horizontal .col-md-4 {
+    padding-left: 0.25rem;
+    padding-right: 0.75rem;
+}
+
+/* Ensure row wrapping */
+.tight-horizontal .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.15rem;
+    margin-left: -0.15rem;
+}
+
+.light-mode #employeeForm {
+    box-shadow: none !important;
+    border: none !important;
+}
+
+#employeeForm fieldset {
+    border: none !important;
+}
+
+.light-mode #employeeForm fieldset {
+    border: none !important;
+}
+
+/* Increase vertical space between label and previous item */
+#employeeForm .form-label {
+    margin-top: 0.75rem;
+    /* Increased from default 0 to 0.75rem (12px) */
+    margin-bottom: 0.25rem;
+    /* Default spacing below label */
+}
+
+/* Legend styling */
+#employeeForm legend {
+    background-color: #4a4c4f;
+    /* Dark mode background */
+    color: #FFF;
+    /* White font */
+    padding: 0.25rem 0.5rem;
+    /* Add some padding for readability */
+    margin-bottom: 0.5rem;
+    /* Space below legend */
+    font-size: 1.5rem;
+    /* Match default font size */
+}
+
+.light-mode #employeeForm legend {
+    background-color: #dee2e6;
+    /* Light mode background */
+    color: #212529;
+    /* Black font */
+}
+
+.container-fluid {
+    padding: 0 !important;
 }
 
 /* Media queries */
+@media (max-width: 1350px) {}
+
 @media (max-width: 768px) {
     #sidebar {
         max-width: 100%;
@@ -388,7 +509,7 @@ a.sidebar-link:hover {
     }
 
     #sidebar.collapsed {
-        margin-left: -100%;
+        margin-left: -102%;
     }
 
     #sidebar:not(.collapsed) {
