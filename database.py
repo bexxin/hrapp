@@ -91,6 +91,29 @@ def fetch_departments():
         )
 
 
+def fetch_jobs():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        query = """
+            SELECT *
+            FROM HR_JOBS
+        """
+        cursor.execute(query)
+        table_data = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+        cursor.close()
+        connection.close()
+        return table_data, column_names, None  # Success: error is None
+    except cx_Oracle.Error as error:
+        print(f"Database error: {error}")
+        return (
+            [],
+            [],
+            str(error),
+        )
+
+
 def fetch_manage_employees():
     try:
         connection = get_db_connection()

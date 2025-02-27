@@ -68,6 +68,27 @@
                 </li>
             </ul>
         </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                data-bs-target="#departments" aria-expanded="false" aria-controls="departments">
+                <i class="bi bi-building"></i>
+                <span>Departments</span>
+            </a>
+            <ul id="departments" class="sidebar-dropdown list-unstyled collapse">
+                <li class="sidebar-item">
+                    <a href="{{ url_for('new_department') }}" class="sidebar-link">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>New Departments</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{{ url_for('manage_department') }}" class="sidebar-link">
+                        <i class="bi bi-list-task"></i>
+                        <span>Manage Departments</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
         <li class="sidebar-header">
             Management
         </li>
