@@ -1,8 +1,14 @@
 /* static/css/style.css */
+
+/* Font Import */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+/* Base Styles */
 body {
     font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background-color: #1a1d20;
+    color: #FFF;
 }
 
 li {
@@ -13,36 +19,73 @@ a {
     text-decoration: none;
 }
 
-h1,
-h2,
-p {
+h1, h2, p {
     color: #FFF;
 }
 
-/* Dark mode (default) */
-body {
-    background-color: #1a1d20;
-    color: #FFF;
-}
-
+/* Layout */
 .main {
     min-height: 100vh;
-    width: 100%;
-    overflow: hidden;
+    width: calc(100% - 275px);
+    margin-left: 275px;
+    padding-top: 70px;
     background-color: #1a1d20;
-    transition: all 0.35s ease-in-out;
+    transition: margin-left 0.35s ease-in-out, width 0.35s ease-in-out;
+}
+
+.navbar {
+    padding: 1.15rem 1.5rem;
+    background-color: #212529;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 #sidebar {
     max-width: 275px;
     min-width: 275px;
-    transition: all 0.35s ease-in-out;
+    width: 275px;
+    height: calc(100vh - 70px);
+    position: fixed;
+    top: 70px;
+    left: 0;
     background-color: #212529;
     display: flex;
     flex-direction: column;
+    transition: margin-left 0.35s ease-in-out;
+    z-index: 1000;
 }
 
-/* Light mode */
+.container-fluid {
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 70px;
+    padding: 0 1rem !important;
+    transition: margin-left 0.35s ease-in-out;
+}
+
+/* Sidebar toggling */
+#sidebar.collapsed {
+    margin-left: -275px;
+}
+
+#sidebar.collapsed + .main {
+    margin-left: 0;
+    width: 100%;
+}
+
+#sidebar.collapsed ~ .container-fluid {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Light Mode */
 body.light-mode {
     background-color: #FFF;
     color: #212529;
@@ -56,226 +99,38 @@ body.light-mode {
     background-color: #E9ECEF;
 }
 
+.light-mode .navbar {
+    background-color: #F8F9FA;
+    border-bottom: 1px solid #DEE2E6;
+}
+
 .light-mode h1,
 .light-mode h2,
 .light-mode p {
     color: #212529;
 }
 
-.light-mode .sidebar-link {
-    color: #212529;
-}
-
-.light-mode .sidebar-logo a {
-    color: #212529;
-}
-
-.light-mode .sidebar-header {
-    color: #212529;
-}
-
-/* Table container */
-.table-container {
-    max-height: 300px !important;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-    width: 100% !important;
-    display: block !important;
-    border-radius: 0.375rem;
-}
-
-/* Webkit scrollbar (dark mode) */
-.table-container::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-.table-container::-webkit-scrollbar-track {
-    background: #212529;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-    background: #495057;
-    border-radius: 5px;
-}
-
-.table-container::-webkit-scrollbar-thumb:hover {
-    background: #6c757d;
-}
-
-/* Firefox scrollbar (dark mode) */
-.table-container {
-    scrollbar-width: thin;
-    scrollbar-color: #495057 #212529;
-}
-
-/* Webkit scrollbar (light mode) */
-.light-mode .table-container::-webkit-scrollbar-track {
-    background: #E9ECEF !important;
-}
-
-.light-mode .table-container::-webkit-scrollbar-thumb {
-    background: #6C757D !important;
-}
-
-.light-mode .table-container::-webkit-scrollbar-thumb:hover {
-    background: #5A6268 !important;
-}
-
-/* Firefox scrollbar (light mode) */
-.light-mode .table-container {
-    scrollbar-width: thin;
-    scrollbar-color: #6C757D #E9ECEF !important;
-}
-
-/* Table styles */
-.table {
-    margin-bottom: 0;
-    width: 100%;
-}
-
-/* Dark mode table */
-.table-dark {
-    background-color: #212529;
-    color: #FFF;
-    --bs-table-hover-bg: #4a4c4f;
-    /* Dark mode hover variable */
-}
-
-.table-container .table-dark thead th {
-    background-color: #4a4c4f !important;
-    color: #FFF !important;
-}
-
-.table-container .table-dark td {
-    background-color: #323539 !important;
-    color: #FFF !important;
-}
-
-/* Light mode table */
-.light-mode .table-container .table-dark {
-    background-color: #E9ECEF !important;
-    /* Matches sidebar */
-    color: #212529 !important;
-    --bs-table-hover-bg: #DEE2E6 !important;
-    /* Light mode hover variable */
-}
-
-.light-mode .table-container .table-dark thead th {
-    background-color: #DEE2E6 !important;
-    color: #212529 !important;
-}
-
-.light-mode .table-container .table-dark td {
-    background-color: #FFF !important;
-    color: #212529 !important;
-}
-
-/* Hover effect */
-.table-dark.table-hover tbody tr:hover {
-    background-color: #4a4c4f !important;
-    /* Dark mode hover */
-}
-
-.light-mode .table-container .table-dark.table-hover tbody tr:hover {
-    --bs-table-hover-bg: #DEE2E6 !important;
-    /* Light mode hover variable */
-    background-color: #DEE2E6 !important;
-    /* Direct override */
-}
-
-/* Accordion styling */
-.accordion-item {
-    background-color: #212529;
-    border: 1px solid #444;
-}
-
-.light-mode .accordion-item {
-    background-color: #E9ECEF !important;
-    border: 1px solid #DEE2E6;
-}
-
-/* Accordion header */
-.accordion-button {
-    background-color: #4a4c4f;
-    /* Always #4a4c4f in dark mode */
-    color: #FFF;
-    padding: 0.625rem 1.625rem;
-    border-radius: 0.375rem !important;
-    /* Rounded corners (6px) */
-}
-
-.accordion-button:not(.collapsed) {
-    background-color: #4a4c4f;
-    /* Keep #4a4c4f when open */
-    color: #FFF;
-    /* White font when open */
-    border-radius: 0.375rem !important;
-    /* Maintain rounded corners when open */
-}
-
-.light-mode .accordion-button {
-    background-color: #dee2e6 !important;
-    /* Always #dee2e6 in light mode */
-    color: #212529 !important;
-    /* Black font in light mode */
-    border-radius: 0.375rem !important;
-    /* Rounded corners in light mode */
-}
-
-.light-mode .accordion-button:not(.collapsed) {
-    background-color: #dee2e6 !important;
-    /* Keep #dee2e6 when open */
-    color: #212529 !important;
-    /* Black font when open */
-    border-radius: 0.375rem !important;
-    /* Maintain rounded corners when open */
-}
-
-.accordion-button:focus {
-    box-shadow: none;
-}
-
-/* White arrow (dark mode) */
-.accordion-button::after {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-}
-
-.accordion-button:not(.collapsed)::after {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-}
-
-/* Dark arrow (light mode) */
-.light-mode .accordion-button::after,
-.light-mode .accordion-button:not(.collapsed)::after {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-}
-
-.accordion-body {
+/* Navbar and Sidebar Elements */
+.navbar .sidebar-logo {
     padding: 0;
+    margin-right: 1rem;
 }
 
-/* Navbar */
-.navbar {
-    padding: 1.15rem 1.5rem;
-    background-color: #212529;
+.navbar .sidebar-logo a {
+    color: #FFF;
+    font-weight: 800;
+    font-size: 1.25rem;
 }
 
-.light-mode .navbar {
-    background-color: #F8F9FA;
-    border-bottom: 1px solid #DEE2E6;
+.light-mode .navbar .sidebar-logo a {
+    color: #212529; /* Black in light mode */
 }
 
-/* Sidebar styles */
-#sidebar.collapsed {
-    margin-left: -275px;
-}
-
-/* Toggler buttons */
 .toggler-btn {
     background-color: transparent;
     cursor: pointer;
     border: 0;
+    margin-right: 1rem;
 }
 
 .toggler-btn .navbar-toggler-icon {
@@ -288,52 +143,18 @@ body.light-mode {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23212529' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
 }
 
-.mobile-toggle-btn {
-    display: none;
-    background-color: transparent;
-    cursor: pointer;
-    border: 0;
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 1001;
-    padding: 0.5rem;
-}
-
-.mobile-toggle-btn .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23FFFFFF' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-    width: 1.5rem;
-    height: 1.5rem;
-}
-
-.light-mode .mobile-toggle-btn .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23212529' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-}
-
-/* Sidebar elements */
-/* .navbar {
-    padding: 1.15rem 1.5rem;
-} */
-
 .sidebar-nav {
     flex: 1 1 auto;
-}
-
-.sidebar-logo {
-    padding: 1.15rem 1.5rem;
-    text-align: center;
-}
-
-.sidebar-logo a {
-    color: #FFF;
-    font-weight: 800;
-    font-size: 1.25rem;
 }
 
 .sidebar-header {
     color: #FFF;
     font-size: .75rem;
     padding: 1.5rem 1.5rem .375rem;
+}
+
+.light-mode .sidebar-header {
+    color: #212529; /* Black in light mode */
 }
 
 .sidebar-link i.bi,
@@ -345,8 +166,7 @@ body.light-mode {
 }
 
 .light-mode .sidebar-link i.bi,
-.light-mode .sidebar-link i.lni,
-.light-mode #theme-toggle i.bi {
+.light-mode .sidebar-link i.lni {
     color: #212529 !important;
 }
 
@@ -356,6 +176,10 @@ a.sidebar-link {
     position: relative;
     transition: all 0.35s;
     display: block;
+}
+
+.light-mode a.sidebar-link {
+    color: #212529;
 }
 
 a.sidebar-link:hover {
@@ -388,16 +212,132 @@ a.sidebar-link:hover {
     padding-left: 1.5rem;
 }
 
-/* Theme toggle button */
+/* Theme Toggle Button */
 #theme-toggle {
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
-    margin-right: 0.5rem;
-    /* Adds 8px space to the right of the button */
 }
 
-/* static/css/style.css (relevant snippet only) */
-/* Sortable headers */
+/* Mobile Toggle Button */
+.mobile-toggle-btn {
+    display: none;
+    background-color: transparent;
+    cursor: pointer;
+    border: 0;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1001;
+    padding: 0.5rem;
+}
+
+.mobile-toggle-btn .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23FFFFFF' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.light-mode .mobile-toggle-btn .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23212529' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Table Styles */
+.table {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.table-container {
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    width: 100% !important;
+    display: block !important;
+    border-radius: 0.375rem;
+}
+
+.table-dark {
+    background-color: #212529;
+    color: #FFF;
+    --bs-table-hover-bg: #4a4c4f;
+}
+
+.table-container .table-dark thead th {
+    background-color: #4a4c4f !important;
+    color: #FFF !important;
+}
+
+.table-container .table-dark td {
+    background-color: #323539 !important;
+    color: #FFF !important;
+}
+
+.table-dark.table-hover tbody tr:hover {
+    background-color: #4a4c4f !important;
+}
+
+.light-mode .table-container .table-dark {
+    background-color: #E9ECEF !important;
+    color: #212529 !important;
+    --bs-table-hover-bg: #DEE2E6 !important;
+}
+
+.light-mode .table-container .table-dark thead th {
+    background-color: #DEE2E6 !important;
+    color: #212529 !important;
+}
+
+.light-mode .table-container .table-dark td {
+    background-color: #FFF !important;
+    color: #212529 !important;
+}
+
+.light-mode .table-container .table-dark.table-hover tbody tr:hover {
+    background-color: #DEE2E6 !important;
+}
+
+/* Scrollbar Styles */
+.table-container::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #212529;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #495057;
+    border-radius: 5px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #6c757d;
+}
+
+.table-container {
+    scrollbar-width: thin;
+    scrollbar-color: #495057 #212529;
+}
+
+.light-mode .table-container::-webkit-scrollbar-track {
+    background: #E9ECEF !important;
+}
+
+.light-mode .table-container::-webkit-scrollbar-thumb {
+    background: #6C757D !important;
+}
+
+.light-mode .table-container::-webkit-scrollbar-thumb:hover {
+    background: #5A6268 !important;
+}
+
+.light-mode .table-container {
+    scrollbar-width: thin;
+    scrollbar-color: #6C757D #E9ECEF !important;
+}
+
+/* Sortable Headers */
 .sortable {
     cursor: pointer;
     position: relative;
@@ -405,83 +345,103 @@ a.sidebar-link:hover {
 
 .sortable .bi-arrow-down-up {
     margin-left: 0.25rem;
-    /* Space between text and icon */
 }
 
 .sortable.asc .bi-arrow-down-up::before {
     content: "\f144";
-    /* Up arrow */
     color: #FFF;
-    /* White in dark mode */
 }
 
 .sortable.desc .bi-arrow-down-up::before {
     content: "\f13f";
-    /* Down arrow */
     color: #FFF;
-    /* White in dark mode */
 }
 
 .light-mode .sortable.asc .bi-arrow-down-up::before,
 .light-mode .sortable.desc .bi-arrow-down-up::before {
     color: #212529;
-    /* Black in light mode */
 }
 
-/* static/css/style.css (relevant snippet only) */
-/* Add at the end or after existing form styles */
-.short-input {
-    max-width: 140px;
-    /* Short width for ID fields */
+/* Accordion Styling */
+.accordion-item {
+    background-color: #212529;
+    border: 1px solid #444;
 }
 
-/* Ensure it works in both modes */
-.light-mode .short-input {
-    max-width: 140px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* Consistent with light mode shadow */
+.light-mode .accordion-item {
+    background-color: #E9ECEF !important;
+    border: 1px solid #DEE2E6;
 }
 
-/* Form shadow in light mode */
-.light-mode #employeeForm {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: none !important;
+.accordion-button {
+    background-color: #4a4c4f;
+    color: #FFF;
+    padding: 0.625rem 1.625rem;
+    border-radius: 0.375rem !important;
 }
 
+.accordion-button:not(.collapsed) {
+    background-color: #4a4c4f;
+    color: #FFF;
+    border-radius: 0.375rem !important;
+}
+
+.light-mode .accordion-button {
+    background-color: #dee2e6 !important;
+    color: #212529 !important;
+    border-radius: 0.375rem !important;
+}
+
+.light-mode .accordion-button:not(.collapsed) {
+    background-color: #dee2e6 !important;
+    color: #212529 !important;
+    border-radius: 0.375rem !important;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+.accordion-button::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+}
+
+.accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+}
+
+.light-mode .accordion-button::after,
+.light-mode .accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+}
+
+#employeeForm .accordion-body {
+    padding-left: 1.5rem;
+    padding-right: 0.75rem;
+    padding-top: 0.75rem;
+    padding-bottom: 1.5rem;
+    background-color: #323539;
+}
+
+.light-mode #employeeForm .accordion-body {
+    background-color: #FFF !important;
+}
+
+/* Form Styles */
 .col-md-2 {
     flex: 0 0 auto;
     width: 11%;
 }
 
-/* Tight horizontal spacing for adjacent fields */
-.tight-horizontal .col-md-3,
-.tight-horizontal .col-md-4 {
-    padding-left: 0.25rem;
-    padding-right: 0.75rem;
+.short-input {
+    max-width: 140px;
 }
 
-/* Ensure row wrapping */
-.tight-horizontal .row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-right: -0.15rem;
-    margin-left: -0.15rem;
+.light-mode .short-input {
+    max-width: 140px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.light-mode #employeeForm {
-    box-shadow: none !important;
-    border: none !important;
-}
-
-#employeeForm fieldset {
-    border: none !important;
-}
-
-.light-mode #employeeForm fieldset {
-    border: none !important;
-}
-
-/* Increase vertical space between label and previous item */
 #employeeForm .form-label {
     color: #FFF;
     margin-top: 0.75rem;
@@ -492,7 +452,32 @@ a.sidebar-link:hover {
     color: #212529 !important;
 }
 
-/* Legend styling */
+.tight-horizontal .col-md-3,
+.tight-horizontal .col-md-4 {
+    padding-left: 0.25rem;
+    padding-right: 0.75rem;
+}
+
+.tight-horizontal .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.15rem;
+    margin-left: -0.15rem;
+}
+
+#employeeForm fieldset {
+    border: none !important;
+}
+
+.light-mode #employeeForm fieldset {
+    border: none !important;
+}
+
+.light-mode #employeeForm {
+    box-shadow: none !important;
+    border: none !important;
+}
+
 #employeeForm legend {
     background-color: #4a4c4f;
     color: #FFF;
@@ -503,45 +488,25 @@ a.sidebar-link:hover {
 
 .light-mode #employeeForm legend {
     background-color: #dee2e6;
-    /* Light mode background */
     color: #212529;
-    /* Black font */
 }
 
-/* Accordion body styling */
-#employeeForm .accordion-body {
-    background-color: #323539;
-    padding-left: 1.5rem;
-    /* Increased left margin (24px) */
-    padding-right: 0.75rem;
-    /* Keep some right padding */
-    padding-top: 0.75rem;
-    /* Consistent top padding */
-    padding-bottom: 1.5rem;
-    /* Consistent bottom padding */
+/* Media Queries */
+@media (max-width: 1350px) {
+    /* No changes needed */
 }
-
-.light-mode #employeeForm .accordion-body {
-    background-color: #FFF !important;
-    /* Light mode background */
-}
-
-.container-fluid {
-    padding: 0 !important;
-}
-
-/* Media queries */
-@media (max-width: 1350px) {}
 
 @media (max-width: 768px) {
     #sidebar {
         max-width: 100%;
         min-width: 100%;
         width: 100%;
+        top: 70px;
+        height: calc(100vh - 70px);
     }
 
     #sidebar.collapsed {
-        margin-left: -102%;
+        margin-left: -100%;
     }
 
     #sidebar:not(.collapsed) {
@@ -551,9 +516,21 @@ a.sidebar-link:hover {
     .main {
         margin-left: 0;
         width: 100%;
+        padding-top: 70px;
     }
 
-    #sidebar:not(.collapsed)~.mobile-toggle-btn {
+    .navbar {
+        left: 0;
+    }
+
+    .container-fluid {
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+        padding-top: 70px;
+    }
+
+    #sidebar:not(.collapsed) ~ .mobile-toggle-btn {
         display: block;
     }
 }

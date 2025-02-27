@@ -1,8 +1,5 @@
 <!-- templates/sidebar.html -->
 <aside id="sidebar" class="sidebar-toggle">
-    <div class="sidebar-logo">
-        <a href="#">COMP214</a>
-    </div>
     <!-- Sidebar Navigation -->
     <ul class="sidebar-nav p-0">
         <li class="sidebar-header">
@@ -53,19 +50,19 @@
         <li class="sidebar-item">
             <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
                 data-bs-target="#jobs" aria-expanded="false" aria-controls="jobs">
-                <i class="bi bi-people"></i>
+                <i class="bi bi-building"></i>
                 <span>Jobs</span>
             </a>
             <ul id="jobs" class="sidebar-dropdown list-unstyled collapse">
                 <li class="sidebar-item">
                     <a href="{{ url_for('new_job') }}" class="sidebar-link">
-                        <i class="bi bi-person-plus"></i>
+                        <i class="bi bi-plus-circle"></i>
                         <span>New Jobs</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a href="{{ url_for('manage_job') }}" class="sidebar-link">
-                        <i class="bi bi-person-gear"></i>
+                        <i class="bi bi-list-task"></i>
                         <span>Manage Jobs</span>
                     </a>
                 </li>
