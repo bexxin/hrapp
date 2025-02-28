@@ -77,9 +77,9 @@ h1, h2, p {
     margin-left: -300px;
 }
 
-#sidebar.collapsed + .main {
-    margin-left: 0;
-    width: 100%;
+#sidebar.collapsed ~ .main {
+    margin-left: 0 !important;
+    width: 100% !important;
 }
 
 #sidebar.collapsed ~ .container-fluid {
