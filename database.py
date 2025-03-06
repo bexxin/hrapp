@@ -176,3 +176,17 @@ def add_employee(first_name, last_name, email, phone, hire_date, job_id, salary,
     except cx_Oracle.Error as error:
         print(f"Database error: {error}")
         return {"success": False, "error": str(error)}
+
+
+def fetch_all_jobs():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        function_call = cursor.callfunc("get_all_jobs", cx_Oracle.CURSOR)
+        job_data = function_call.fetchall()
+        job_columns = [desc[0] for desc in function_call.description]
+        cursor.close()
+        connection.close()
+        return job_data, job_columns, None
+    except cx_Oracle.DatabaseError as e:
+        return [], [], str(e)

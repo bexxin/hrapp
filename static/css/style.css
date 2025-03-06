@@ -446,13 +446,15 @@ a.sidebar-link:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#employeeForm .form-label {
+#employeeForm .form-label,
+#jobForm .form-label {
     color: #FFF;
     margin-top: 0.75rem;
     margin-bottom: 0.25rem;
 }
 
-.light-mode #employeeForm .form-label {
+.light-mode #employeeForm .form-label,
+.light-mode #jobForm .form-label {
     color: #212529 !important;
 }
 

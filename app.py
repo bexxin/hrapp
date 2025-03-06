@@ -10,6 +10,7 @@ from database import (
     add_employee,
     get_job_desc,
     update_job_details,
+    fetch_all_jobs,
 )
 import setup_database
 
@@ -182,7 +183,12 @@ def new_job():
 
 @app.route("/manage_job")
 def manage_job():
-    return render_template("manage_job.html")
+    job_data, job_columns, job_error = fetch_all_jobs()
+    if job_error:
+        return render_template("manage_job.html", jobs=[], first_job={}, job_error=job_error)
+    jobs = [{"job_id": row[0], "job_title": row[1], "min_salary": row[2], "max_salary": row[3]} for row in job_data]
+    first_job = jobs[0] if jobs else {}
+    return render_template("manage_job.html", jobs=jobs, first_job=first_job, job_error=None)
 
 
 @app.route("/new_department")
