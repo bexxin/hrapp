@@ -1,8 +1,10 @@
 # app.py
+
+# region IMPORTS
 import datetime
 from flask import Flask, jsonify, render_template, request
 from database import (
-    create_job,
+    add_job,
     fetch_employees,
     fetch_departments,
     fetch_manage_employees,
@@ -10,9 +12,10 @@ from database import (
     add_employee,
     get_job_desc,
     update_job_details,
-    fetch_all_jobs,
 )
 import setup_database
+
+# endregion
 
 app = Flask(__name__)
 
@@ -33,6 +36,7 @@ def index():
     return render_template("index.html")
 
 
+# region DASHBOARD
 @app.route("/tables")
 def tables():
     emp_data, emp_columns, emp_error = fetch_employees()
@@ -49,9 +53,30 @@ def tables():
     )
 
 
+@app.route("/dashboard_chart")
+def dashboard_chart():
+    return render_template("dashboard_chart.html")
+
+
+# endregion
+
+
+# region EMPLPOYEE
 @app.route("/hire_employee", methods=["GET"])
 def hire_employee():
-    return render_template("hire_employee.html")
+    # Fetch data for dropdowns
+    emp_data, emp_columns, emp_error = fetch_manage_employees()
+    emp_data = serialize_employee_data(emp_data)
+
+    job_data, job_columns, job_error = fetch_jobs()
+    job_options = [[row[0], row[1]] for row in job_data] if not job_error else []
+
+    dept_data, dept_columns, dept_error = fetch_departments()
+    department_options = [[row[0], row[1]] for row in dept_data] if not dept_error else []
+
+    return render_template(
+        "hire_employee.html", emp_data=emp_data, job_options=job_options, department_options=department_options
+    )
 
 
 @app.route("/hire_employee", methods=["POST"])
@@ -128,6 +153,10 @@ def manage_employee():
     )
 
 
+# endregion
+
+
+# region JOB
 @app.route("/get_job_title", methods=["GET"])
 def api_get_job_title():
     job_id = request.args.get("job_id")
@@ -138,52 +167,48 @@ def api_get_job_title():
 
 
 @app.route("/update_job", methods=["POST"])
-def api_update_job(job_id, new_title, min_salary, max_salary):
+def api_update_job():
     try:
         data = request.json
         job_id = data.get("job_id")
         if not job_id:
-            return jsonify({"success": False, "error": "Missing job id"})
-        new_title = data.get("new_title")
+            return jsonify({"success": False, "error": "Missing job id"}), 400
+        new_title = data.get("job_title")  # Changed from "new_title" to match frontend
         min_salary = data.get("min_salary")
         max_salary = data.get("max_salary")
 
         result = update_job_details(job_id, new_title, min_salary, max_salary)
+        if result["success"]:
+            return jsonify({"status": "success", "message": result["message"]})
+        else:
+            return jsonify({"status": "error", "message": result["error"]}), 500
+    except Exception as e:
+        return jsonify({"status": "error", "error": str(e)}), 500
+
+
+# app.py (add these routes)
+@app.route("/new_job", methods=["GET"])
+def new_job_page():
+    return render_template("new_job.html")
+
+
+@app.route("/new_job", methods=["POST"])
+def new_job():
+    try:
+        data = request.json
+        mandatory_fields = ["job_id", "job_title", "min_salary"]
+        if not all(field in data for field in mandatory_fields):
+            return jsonify({"success": False, "error": "Missing required fields"}), 400
+
+        result = add_job(job_id=data["job_id"], job_title=data["job_title"], min_salary=data["min_salary"])
         return jsonify(result)
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-@app.route("/add_job", methods=["POST"])
-def api_add_job():
-    try:
-        data = request.json
-        mandatory_fields = []
-        if not all(field in data for field in mandatory_fields):
-            return jsonify({"success": False, "error": "Missing required fields"}), 400
-
-        # Call the function
-        result = create_job(
-            job_id=data["job_id"],
-            job_title=data["job_title"],
-            min_salary=data["min_salary"],
-            max_salary=data["max_salary"],
-        )
-
-        return jsonify(result)  # Return success/error response
-
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
-
-
-@app.route("/new_job")
-def new_job():
-    return render_template("new_job.html")
-
-
 @app.route("/manage_job")
 def manage_job():
-    job_data, job_columns, job_error = fetch_all_jobs()
+    job_data, job_columns, job_error = fetch_jobs()
     if job_error:
         return render_template("manage_job.html", jobs=[], first_job={}, job_error=job_error)
     jobs = [{"job_id": row[0], "job_title": row[1], "min_salary": row[2], "max_salary": row[3]} for row in job_data]
@@ -191,6 +216,10 @@ def manage_job():
     return render_template("manage_job.html", jobs=jobs, first_job=first_job, job_error=None)
 
 
+# endregion
+
+
+# region DEPARTMENT
 @app.route("/new_department")
 def new_department():
     return render_template("new_department.html")
@@ -201,10 +230,7 @@ def manage_department():
     return render_template("manage_department.html")
 
 
-@app.route("/dashboard_chart")
-def dashboard_chart():
-    return render_template("dashboard_chart.html")
-
+# endregion
 
 if __name__ == "__main__":
     setup_database.run_sql_scripts()

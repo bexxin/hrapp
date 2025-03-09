@@ -1,0 +1,120 @@
+<!-- templates/new_job.html -->
+{% extends "base.html" %}
+{% block title %}Add New Job{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <h2>Add New Job</h2>
+        <div id="alertContainer" class="mb-3" style="display: none;"></div>
+
+        <form id="newJobForm" class="mt-3">
+            <div class="accordion accordion-flush" id="newJobAccordion">
+                <!-- Job Group -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingJob">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJob" aria-expanded="true" aria-controls="collapseJob">
+                            Job Details
+                        </button>
+                    </h2>
+                    <div id="collapseJob" class="accordion-collapse collapse show" aria-labelledby="headingJob">
+                        <div class="accordion-body">
+                            <div class="row tight-horizontal">
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Job_ID">Job ID:</label>
+                                    <input type="text" class="form-control short-input" id="Job_ID" name="job_id" required>
+                                </div>
+                            </div>
+                            <div class="row tight-horizontal">
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Job_Title">Job Title:</label>
+                                    <input type="text" class="form-control" id="Job_Title" name="job_title" required>
+                                </div>
+                            </div>
+                            <div class="row tight-horizontal">
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Min_Salary">Minimum Salary:</label>
+                                    <input type="number" class="form-control" id="Min_Salary" name="min_salary" step="100" min="0" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Max_Salary">Maximum Salary:</label>
+                                    <input type="number" class="form-control" id="Max_Salary" name="max_salary" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-start gap-2 mt-3">
+                <button type="submit" class="btn btn-success">Add Job</button>
+                <button type="reset" class="btn btn-secondary">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("newJobForm");
+            const alertContainer = document.getElementById("alertContainer");
+            const minSalaryInput = document.getElementById("Min_Salary");
+            const maxSalaryInput = document.getElementById("Max_Salary");
+
+            // Update Max Salary dynamically when Min Salary changes
+            minSalaryInput.addEventListener("input", () => {
+                const minSalary = parseFloat(minSalaryInput.value);
+                if (!isNaN(minSalary)) {
+                    maxSalaryInput.value = minSalary * 2;
+                } else {
+                    maxSalaryInput.value = "";
+                }
+            });
+
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const formData = {
+                    job_id: document.getElementById("Job_ID").value,
+                    job_title: document.getElementById("Job_Title").value,
+                    min_salary: parseFloat(document.getElementById("Min_Salary").value)
+                    // max_salary is calculated by the procedure, so not sent
+                };
+
+                fetch("/new_job", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alertContainer.style.display = "block";
+                    if (data.success) {
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                ${data.message}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `;
+                        form.reset();
+                        maxSalaryInput.value = ""; // Reset Max Salary too
+                    } else {
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                ${data.error}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    alertContainer.style.display = "block";
+                    alertContainer.innerHTML = `
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            Error: ${error}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    `;
+                });
+            });
+        });
+    </script>
+{% endblock %}

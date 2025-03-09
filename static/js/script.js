@@ -86,7 +86,6 @@ function setupTable(table, form, type) {
             rows.sort((a, b) => {
                 const aValue = a.cells[colIndex].textContent.trim();
                 const bValue = b.cells[colIndex].textContent.trim();
-                // Handle numeric sorting for salary columns in job table
                 if (type === "job" && (colIndex === 2 || colIndex === 3)) {
                     return isAscending
                         ? parseFloat(aValue) - parseFloat(bValue)
@@ -168,10 +167,9 @@ function setupTable(table, form, type) {
 
         editButton.addEventListener("click", () => {
             console.log(`${type} Edit button clicked`);
-
-            // Show Save and Cancel buttons
             saveButton.style.display = "inline-block";
             cancelButton.style.display = "inline-block";
+            editButton.style.display = "none";
 
             if (type === "employee") {
                 const firstNameInput = document.getElementById("First_Name");
@@ -279,7 +277,6 @@ function setupTable(table, form, type) {
                 maxSalaryInput.readOnly = false;
             }
 
-            // Show edit mode alert
             alertContainer.innerHTML = `
                 <div class="alert alert-primary alert-dismissible fade show" role="alert">
                     Entering edit mode
@@ -293,6 +290,7 @@ function setupTable(table, form, type) {
             console.log(`${type} Save button clicked`);
 
             if (type === "employee") {
+                // Employee save logic (unchanged for now)
                 const idInput = document.getElementById("ID");
                 const firstNameInput = document.getElementById("First_Name");
                 const lastNameInput = document.getElementById("Last_Name");
@@ -351,39 +349,89 @@ function setupTable(table, form, type) {
                 deptNameSelect.style.display = "none";
                 deptNameSelect.disabled = true;
                 deptNameInput.style.display = "block";
+
+                saveButton.style.display = "none";
+                cancelButton.style.display = "none";
+                editButton.style.display = "inline-block";
+
+                alertContainer.innerHTML = `
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        Updated successfully
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+                alertContainer.style.display = "block";
             } else if (type === "job") {
                 const jobIdInput = document.getElementById("Job_ID");
                 const jobTitleInput = document.getElementById("Job_Title");
                 const minSalaryInput = document.getElementById("Min_Salary");
                 const maxSalaryInput = document.getElementById("Max_Salary");
 
-                console.log("Switching to save mode for job");
-                jobIdInput.readOnly = true;
-                jobTitleInput.readOnly = true;
-                minSalaryInput.readOnly = true;
-                maxSalaryInput.readOnly = true;
+                const jobData = {
+                    job_id: jobIdInput.value,
+                    job_title: jobTitleInput.value || null,
+                    min_salary: minSalaryInput.value ? parseFloat(minSalaryInput.value) : null,
+                    max_salary: maxSalaryInput.value ? parseFloat(maxSalaryInput.value) : null
+                };
+
+                fetch('/update_job', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(jobData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alertContainer.style.display = "block";
+                    if (data.status === "success") {
+                        jobIdInput.readOnly = true;
+                        jobTitleInput.readOnly = true;
+                        minSalaryInput.readOnly = true;
+                        maxSalaryInput.readOnly = true;
+                        saveButton.style.display = "none";
+                        cancelButton.style.display = "none";
+                        editButton.style.display = "inline-block";
+
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                ${data.message}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `;
+
+                        // Update table row
+                        const row = tbody.querySelector(`tr[data-details*="${jobData.job_id}"]`);
+                        if (row) {
+                            row.cells[1].textContent = jobData.job_title || '';
+                            row.cells[2].textContent = jobData.min_salary || '';
+                            row.cells[3].textContent = jobData.max_salary || '';
+                            row.dataset.details = JSON.stringify(jobData);
+                        }
+                    } else {
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                ${data.message || data.error}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error("Save error:", error);
+                    alertContainer.style.display = "block";
+                    alertContainer.innerHTML = `
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            Error updating job: ${error}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    `;
+                });
             }
-
-            // Hide Save and Cancel buttons
-            saveButton.style.display = "none";
-            cancelButton.style.display = "none";
-
-            // Show success alert
-            alertContainer.innerHTML = `
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    Updated successfully
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            alertContainer.style.display = "block";
-
-            console.log(`${type} Save clicked - updated data:`, initialValues);
         });
 
         cancelButton.addEventListener("click", () => {
             console.log(`${type} Cancel button clicked`);
-
-            // Restore initial values
             Object.keys(initialValues).forEach(id => {
                 const element = document.getElementById(id);
                 if (element && element.tagName === "INPUT") {
@@ -454,11 +502,10 @@ function setupTable(table, form, type) {
                 maxSalaryInput.readOnly = true;
             }
 
-            // Hide Save and Cancel buttons
             saveButton.style.display = "none";
             cancelButton.style.display = "none";
+            editButton.style.display = "inline-block";
 
-            // Show cancel alert
             alertContainer.innerHTML = `
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     Edit mode cancelled

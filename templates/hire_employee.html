@@ -1,2 +1,260 @@
-<!-- templates/tables.html -->
-<h1>Hire New Employee Page</h1>
+<!-- templates/hire_employee.html -->
+{% extends "base.html" %}
+{% block title %}Hire Employee{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <h2>Hire New Employee</h2>
+        <div id="alertContainer" class="mb-3" style="display: none;"></div>
+
+        <form id="hireEmployeeForm" class="mt-3">
+            <div class="accordion accordion-flush" id="hireEmployeeAccordion">
+                <!-- Employee Group -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEmployee">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmployee" aria-expanded="true" aria-controls="collapseEmployee">
+                            Employee Details
+                        </button>
+                    </h2>
+                    <div id="collapseEmployee" class="accordion-collapse collapse show" aria-labelledby="headingEmployee">
+                        <div class="accordion-body">
+                            <div class="row tight-horizontal">
+                                <div class="col-md-3">
+                                    <label class="form-label" for="First_Name">First Name:</label>
+                                    <input type="text" class="form-control" id="First_Name" name="first_name" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Last_Name">Last Name:</label>
+                                    <input type="text" class="form-control" id="Last_Name" name="last_name" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Email">Email:</label>
+                                    <input type="email" class="form-control" id="Email" name="email" required>
+                                </div>
+                            </div>
+                            <div class="row tight-horizontal">
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Phone_Number">Phone:</label>
+                                    <input type="text" class="form-control" id="Phone_Number" name="phone" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Hire_Date">Hire Date:</label>
+                                    <input type="date" class="form-control" id="Hire_Date" name="hire_date" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Salary">Salary:</label>
+                                    <input type="number" class="form-control" id="Salary" name="salary" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="row tight-horizontal">
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Job_ID">Job ID:</label>
+                                    <select class="form-control" id="Job_ID" name="job_id" required>
+                                        <option value="">Select Job ID</option>
+                                        {% for job in job_options %}
+                                            <option value="{{ job[0] }}" data-title="{{ job[1] }}">{{ job[0] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Job_Title">Job Title:</label>
+                                    <select class="form-control" id="Job_Title">
+                                        <option value="">Select Job Title</option>
+                                        {% for job in job_options %}
+                                            <option value="{{ job[1] }}" data-id="{{ job[0] }}">{{ job[1] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manager Group -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingManager">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManager" aria-expanded="true" aria-controls="collapseManager">
+                            Manager
+                        </button>
+                    </h2>
+                    <div id="collapseManager" class="accordion-collapse collapse show" aria-labelledby="headingManager">
+                        <div class="accordion-body">
+                            <div class="row tight-horizontal">
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Manager_Employee_ID">Manager ID:</label>
+                                    <select class="form-control" id="Manager_Employee_ID" name="manager_id">
+                                        <option value="">Select Manager ID</option>
+                                        {% for emp in emp_data %}
+                                            <option value="{{ emp[0] }}" data-first-name="{{ emp[1] }}" data-last-name="{{ emp[2] }}">{{ emp[0] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Manager_First_Name">First Name:</label>
+                                    <select class="form-control" id="Manager_First_Name">
+                                        <option value="">Select First Name</option>
+                                        {% for emp in emp_data %}
+                                            <option value="{{ emp[1] }}" data-id="{{ emp[0] }}" data-last-name="{{ emp[2] }}">{{ emp[1] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Manager_Last_Name">Last Name:</label>
+                                    <select class="form-control" id="Manager_Last_Name">
+                                        <option value="">Select Last Name</option>
+                                        {% for emp in emp_data %}
+                                            <option value="{{ emp[2] }}" data-id="{{ emp[0] }}" data-first-name="{{ emp[1] }}">{{ emp[2] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Department Group -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingDepartment">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDepartment" aria-expanded="true" aria-controls="collapseDepartment">
+                            Department
+                        </button>
+                    </h2>
+                    <div id="collapseDepartment" class="accordion-collapse collapse show" aria-labelledby="headingDepartment">
+                        <div class="accordion-body">
+                            <div class="row tight-horizontal">
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Department_ID">Department ID:</label>
+                                    <select class="form-control" id="Department_ID" name="department_id" required>
+                                        <option value="">Select Department ID</option>
+                                        {% for dept in department_options %}
+                                            <option value="{{ dept[0] }}" data-name="{{ dept[1] }}">{{ dept[0] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="Department_Name">Department Name:</label>
+                                    <select class="form-control" id="Department_Name">
+                                        <option value="">Select Department Name</option>
+                                        {% for dept in department_options %}
+                                            <option value="{{ dept[1] }}" data-id="{{ dept[0] }}">{{ dept[1] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-start gap-2 mt-3">
+                <button type="submit" class="btn btn-success">Hire Employee</button>
+                <button type="reset" class="btn btn-secondary">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("hireEmployeeForm");
+            const alertContainer = document.getElementById("alertContainer");
+
+            // Sync dropdowns
+            const jobIdSelect = document.getElementById("Job_ID");
+            const jobTitleSelect = document.getElementById("Job_Title");
+            const managerIdSelect = document.getElementById("Manager_Employee_ID");
+            const managerFirstNameSelect = document.getElementById("Manager_First_Name");
+            const managerLastNameSelect = document.getElementById("Manager_Last_Name");
+            const deptIdSelect = document.getElementById("Department_ID");
+            const deptNameSelect = document.getElementById("Department_Name");
+
+            // Job sync
+            jobIdSelect.addEventListener("change", () => {
+                const selectedOption = jobIdSelect.options[jobIdSelect.selectedIndex];
+                jobTitleSelect.value = selectedOption.getAttribute("data-title") || "";
+            });
+            jobTitleSelect.addEventListener("change", () => {
+                const selectedOption = jobTitleSelect.options[jobTitleSelect.selectedIndex];
+                jobIdSelect.value = selectedOption.getAttribute("data-id") || "";
+            });
+
+            // Manager sync
+            managerIdSelect.addEventListener("change", () => {
+                const selectedOption = managerIdSelect.options[managerIdSelect.selectedIndex];
+                managerFirstNameSelect.value = selectedOption.getAttribute("data-first-name") || "";
+                managerLastNameSelect.value = selectedOption.getAttribute("data-last-name") || "";
+            });
+            managerFirstNameSelect.addEventListener("change", () => {
+                const selectedOption = managerFirstNameSelect.options[managerFirstNameSelect.selectedIndex];
+                managerIdSelect.value = selectedOption.getAttribute("data-id") || "";
+                managerLastNameSelect.value = selectedOption.getAttribute("data-last-name") || "";
+            });
+            managerLastNameSelect.addEventListener("change", () => {
+                const selectedOption = managerLastNameSelect.options[managerLastNameSelect.selectedIndex];
+                managerIdSelect.value = selectedOption.getAttribute("data-id") || "";
+                managerFirstNameSelect.value = selectedOption.getAttribute("data-first-name") || "";
+            });
+
+            // Department sync
+            deptIdSelect.addEventListener("change", () => {
+                const selectedOption = deptIdSelect.options[deptIdSelect.selectedIndex];
+                deptNameSelect.value = selectedOption.getAttribute("data-name") || "";
+            });
+            deptNameSelect.addEventListener("change", () => {
+                const selectedOption = deptNameSelect.options[deptNameSelect.selectedIndex];
+                deptIdSelect.value = selectedOption.getAttribute("data-id") || "";
+            });
+
+            // Form submission
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const formData = {
+                    first_name: document.getElementById("First_Name").value,
+                    last_name: document.getElementById("Last_Name").value,
+                    email: document.getElementById("Email").value,
+                    phone: document.getElementById("Phone_Number").value,
+                    hire_date: document.getElementById("Hire_Date").value,
+                    job_id: document.getElementById("Job_ID").value,
+                    salary: parseFloat(document.getElementById("Salary").value),
+                    manager_id: document.getElementById("Manager_Employee_ID").value || null,
+                    department_id: document.getElementById("Department_ID").value
+                };
+
+                fetch("/hire_employee", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alertContainer.style.display = "block";
+                    if (data.success) {
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                ${data.message}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `;
+                        form.reset();
+                    } else {
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                ${data.error}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    alertContainer.style.display = "block";
+                    alertContainer.innerHTML = `
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            Error: ${error}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    `;
+                });
+            });
+        });
+    </script>
+{% endblock %}

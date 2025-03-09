@@ -55,23 +55,19 @@ def fetch_jobs():
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-        query = """
-            SELECT *
-            FROM HR_JOBS
+        cursor.execute(
+            """
+            SELECT job_id, job_title, min_salary, max_salary
+            FROM hr_jobs
         """
-        cursor.execute(query)
-        table_data = cursor.fetchall()
-        column_names = [desc[0] for desc in cursor.description]
+        )
+        job_data = cursor.fetchall()
+        job_columns = [desc[0] for desc in cursor.description]
         cursor.close()
         connection.close()
-        return table_data, column_names, None  # Success: error is None
-    except cx_Oracle.Error as error:
-        print(f"Database error: {error}")
-        return (
-            [],
-            [],
-            str(error),
-        )
+        return job_data, job_columns, None
+    except cx_Oracle.DatabaseError as e:
+        return [], [], str(e)
 
 
 def get_job_desc(job_id):
@@ -105,17 +101,15 @@ def update_job_details(job_id, new_title=None, min_salary=None, max_salary=None)
         return {"success": False, "error": str(error)}
 
 
-def create_job(job_id, job_title, min_salary, max_salary):
+def add_job(job_id, job_title, min_salary):
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-
-        cursor.callproc("new_job", [job_id, job_title, min_salary, max_salary])
+        cursor.callproc("new_job", [job_id, job_title, min_salary])
         connection.commit()
         cursor.close()
         connection.close()
-
-        return {"success": True, "message": " New job added successfully."}
+        return {"success": True, "message": "Job added successfully."}
     except cx_Oracle.Error as error:
         print(f"Database error: {error}")
         return {"success": False, "error": str(error)}
@@ -160,33 +154,38 @@ def fetch_manage_employees():
         )
 
 
+# database.py
 def add_employee(first_name, last_name, email, phone, hire_date, job_id, salary, manager_id, department_id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
     try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-
-        cursor.callproc(
-            "employee_hire_sp",
-            [first_name, last_name, email, phone, hire_date, job_id, salary, manager_id, department_id],
+        cursor.execute(
+            """
+            BEGIN
+                employee_hire_sp(
+                    :first_name, :last_name, :email, :phone,
+                    TO_DATE(:hire_date, 'YYYY-MM-DD'), :job_id,
+                    :salary, :manager_id, :department_id
+                );
+            END;
+            """,
+            {
+                "first_name": first_name,
+                "last_name": last_name,
+                "email": email,
+                "phone": phone,
+                "hire_date": hire_date,  # String from form
+                "job_id": job_id,
+                "salary": salary,
+                "manager_id": manager_id,
+                "department_id": department_id,
+            },
         )
         connection.commit()
-        cursor.close()
-        connection.close()
         return {"success": True, "message": "Employee hired successfully."}
     except cx_Oracle.Error as error:
         print(f"Database error: {error}")
         return {"success": False, "error": str(error)}
-
-
-def fetch_all_jobs():
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        function_call = cursor.callfunc("get_all_jobs", cx_Oracle.CURSOR)
-        job_data = function_call.fetchall()
-        job_columns = [desc[0] for desc in function_call.description]
+    finally:
         cursor.close()
         connection.close()
-        return job_data, job_columns, None
-    except cx_Oracle.DatabaseError as e:
-        return [], [], str(e)
