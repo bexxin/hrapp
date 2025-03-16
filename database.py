@@ -103,6 +103,7 @@ def update_job_details(job_id, new_title=None, min_salary=None, max_salary=None)
 
 def add_job(job_id, job_title, min_salary):
     try:
+        print("add job called")
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.callproc("new_job", [job_id, job_title, min_salary])
@@ -156,6 +157,7 @@ def fetch_manage_employees():
 
 # database.py
 def add_employee(first_name, last_name, email, phone, hire_date, job_id, salary, manager_id, department_id):
+    print("add employee called")
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
@@ -189,3 +191,151 @@ def add_employee(first_name, last_name, email, phone, hire_date, job_id, salary,
     finally:
         cursor.close()
         connection.close()
+
+
+def fetch_manage_departments():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        query = """
+            SELECT
+                d.department_id,
+                d.department_name,
+                d.manager_id,
+                d.location_id,
+                e.employee_id,
+                e.first_name,
+                e.last_name,
+                l.location_id AS loc_id,
+                l.street_address,
+                l.postal_code,
+                l.city,
+                l.state_province,
+                l.country_id,
+                c.country_id AS ctry_id,
+                c.country_name,
+                c.region_id,
+                r.region_id AS reg_id,
+                r.region_name
+            FROM hr_departments d
+            JOIN hr_employees e
+                ON e.employee_id = d.manager_id
+            JOIN hr_locations l
+                ON d.location_id = l.location_id
+            JOIN hr_countries c
+                ON l.country_id = c.country_id
+            JOIN hr_regions r
+                ON c.region_id = r.region_id
+        """
+        cursor.execute(query)
+        table_data = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+        cursor.close()
+        connection.close()
+        return table_data, column_names, None  # Success: error is None
+    except cx_Oracle.Error as error:
+        print(f"Database error: {error}")
+        return (
+            [],
+            [],
+            str(error),
+        )
+
+
+def create_department(dept_id, dept_name, manager_id=None, location_id=None):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        cursor.callproc("create_department", [dept_id, dept_name, manager_id, location_id])
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return {"success": True, "message": f"Department {dept_name} created successfully."}
+    except cx_Oracle.DatabaseError as error:
+        return {"success": False, "error": str(error)}
+
+
+def update_department(dept_id, new_name=None, manager_id=None, location_id=None):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        cursor.callproc("update_department", [dept_id, new_name, manager_id, location_id])
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return {"success": True, "message": f"Department {dept_id} updated successfully."}
+    except cx_Oracle.DatabaseError as error:
+        return {"success": False, "error": str(error)}
+
+
+def delete_employee(emp_id):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        cursor.callproc("delete_employee", [emp_id])
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return {"success": True, "message": f"Employee {emp_id} deleted successfully."}
+    except cx_Oracle.DatabaseError as error:
+        return {"success": False, "error": str(error)}
+
+
+def delete_job(job_id):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        cursor.callproc("delete_job", [job_id])
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return {"success": True, "message": f"Job {job_id} deleted successfully."}
+    except cx_Oracle.DatabaseError as error:
+        return {"success": False, "error": str(error)}
+
+
+def delete_department(dept_id):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        cursor.callproc("delete_department", [dept_id])
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return {"success": True, "message": f"Department {dept_id} deleted successfully."}
+    except cx_Oracle.DatabaseError as error:
+        return {"success": False, "error": str(error)}
+
+
+def fetch_locations():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        query = """
+            SELECT
+                l.location_id,
+                l.street_address,
+                l.postal_code,
+                l.city,
+                l.state_province,
+                l.country_id,
+                c.country_name,
+                r.region_name
+            FROM hr_locations l
+            JOIN hr_countries c ON l.country_id = c.country_id
+            JOIN hr_regions r ON c.region_id = r.region_id
+        """
+        cursor.execute(query)
+        table_data = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+        cursor.close()
+        connection.close()
+        return table_data, column_names, None
+    except cx_Oracle.Error as error:
+        print(f"Database error: {error}")
+        return [], [], str(error)

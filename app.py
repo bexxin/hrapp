@@ -5,13 +5,19 @@ import datetime
 from flask import Flask, jsonify, render_template, request
 from database import (
     add_job,
+    delete_department,
+    delete_employee,
+    delete_job,
     fetch_employees,
     fetch_departments,
+    fetch_manage_departments,
     fetch_manage_employees,
     fetch_jobs,
     add_employee,
     get_job_desc,
+    update_department,
     update_job_details,
+    fetch_locations,
 )
 import setup_database
 
@@ -153,6 +159,16 @@ def manage_employee():
     )
 
 
+@app.route("/delete_employee", methods=["DELETE"])
+def delete_emp():
+    emp_id = request.json.get("employee_id")
+    if not emp_id:
+        return jsonify({"error": "employee_id is required"}), 400
+
+    result = delete_employee(emp_id)
+    return jsonify(result), 200 if result["success"] else 500
+
+
 # endregion
 
 
@@ -216,6 +232,16 @@ def manage_job():
     return render_template("manage_job.html", jobs=jobs, first_job=first_job, job_error=None)
 
 
+@app.route("/delete_job", methods=["DELETE"])
+def api_delete_job():
+    job_id = request.json.get("job_id")
+    if not job_id:
+        return jsonify({"error": "job_id is required"}), 400
+
+    result = delete_job(job_id)
+    return jsonify(result), 200 if result["success"] else 500
+
+
 # endregion
 
 
@@ -225,9 +251,124 @@ def new_department():
     return render_template("new_department.html")
 
 
+# @app.route("/manage_department")
+# def manage_department():
+#     dept_data, dept_columns, dept_error = fetch_manage_departments()
+#     if dept_error:
+#         return render_template("manage_department.html", departments=[], first_dept={}, dept_error=dept_error)
+#     departments = [
+#         {
+#             "department_id": row[0],
+#             "department_name": row[1],
+#             "manager_id": row[2],
+#             "location_id": row[3],
+#             "employee_id": row[4],
+#             "first_name": row[5],
+#             "last_name": row[6],
+#             "loc_id": row[7],
+#             "street_address": row[8],
+#             "postal_code": row[9],
+#             "city": row[10],
+#             "state_province": row[11],
+#             "country_id": row[12],
+#             "ctry_id": row[13],
+#             "country_name": row[14],
+#             "region_id": row[15],
+#             "reg_id": row[16],
+#             "region_name": row[17],
+#         }
+#         for row in dept_data
+#     ]
+#     first_dept = departments[0] if departments else {}
+#     return render_template("manage_department.html", departments=departments, first_dept=first_dept, dept_error=None)
+
+
+# app.py
 @app.route("/manage_department")
 def manage_department():
-    return render_template("manage_department.html")
+    dept_data, dept_columns, dept_error = fetch_manage_departments()
+    emp_data, emp_columns, emp_error = fetch_manage_employees()  # For manager dropdowns
+    loc_data, loc_columns, loc_error = fetch_locations()  # For location dropdowns
+
+    emp_data = serialize_employee_data(emp_data)  # Serialize dates
+
+    if dept_error or emp_error or loc_error:
+        return render_template(
+            "manage_department.html",
+            departments=[],
+            employees=[],
+            locations=[],
+            first_dept={},
+            dept_error=dept_error or emp_error or loc_error,
+        )
+
+    departments = [
+        {
+            "department_id": row[0],
+            "department_name": row[1],
+            "manager_id": row[2],
+            "location_id": row[3],
+            "employee_id": row[4],
+            "first_name": row[5],
+            "last_name": row[6],
+            "loc_id": row[7],
+            "street_address": row[8],
+            "postal_code": row[9],
+            "city": row[10],
+            "state_province": row[11],
+            "country_id": row[12],
+            "ctry_id": row[13],
+            "country_name": row[14],
+            "region_id": row[15],
+            "reg_id": row[16],
+            "region_name": row[17],
+        }
+        for row in dept_data
+    ]
+    employees = [{"employee_id": row[0], "first_name": row[1], "last_name": row[2]} for row in emp_data]
+    locations = [
+        {
+            "location_id": row[0],
+            "street_address": row[1],
+            "postal_code": row[2],
+            "city": row[3],
+            "state_province": row[4],
+            "country_id": row[5],
+            "country_name": row[6],  # Assuming fetch_locations includes this
+            "region_name": row[7],  # Assuming fetch_locations includes this
+        }
+        for row in loc_data
+    ]
+    first_dept = departments[0] if departments else {}
+    return render_template(
+        "manage_department.html",
+        departments=departments,
+        employees=employees,
+        locations=locations,
+        first_dept=first_dept,
+        dept_error=None,
+    )
+
+
+@app.route("/update_department", methods=["PUT"])
+def api_update_department():
+    data = request.json
+    dept_id = data.get("dept_id")
+    if not dept_id:
+        return jsonify({"error": "dept_id is required"}), 400
+
+    result = update_department(dept_id, data.get("new_name"), data.get("manager_id"), data.get("location_id"))
+    return jsonify(result), 200 if result["success"] else 500
+
+
+@app.route("/delete_department", methods=["DELETE"])
+def api_delete_department():
+    dept_id = request.json.get("dept_id")
+    if not dept_id:
+        return jsonify({"error": "dept_id is required"}), 400
+
+    result = delete_department(dept_id)
+    return jsonify(result), 200 if result["success"] else 500
 
 
 # endregion

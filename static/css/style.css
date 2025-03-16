@@ -22,7 +22,9 @@ a {
     text-decoration: none;
 }
 
-h1, h2, p {
+h1,
+h2,
+p {
     color: #FFF;
 }
 
@@ -77,12 +79,12 @@ h1, h2, p {
     margin-left: -300px;
 }
 
-#sidebar.collapsed ~ .main {
+#sidebar.collapsed~.main {
     margin-left: 0 !important;
     width: 100% !important;
 }
 
-#sidebar.collapsed ~ .container-fluid {
+#sidebar.collapsed~.container-fluid {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -447,18 +449,20 @@ a.sidebar-link:hover {
 }
 
 #employeeForm .form-label,
-#jobForm .form-label, 
+#jobForm .form-label,
 #hireEmployeeForm .form-label,
-#newJobForm .form-label {
+#newJobForm .form-label,
+#deptForm .form-label {
     color: #FFF;
     margin-top: 0.75rem;
     margin-bottom: 0.25rem;
 }
 
 .light-mode #employeeForm .form-label,
-.light-mode #jobForm .form-label, 
+.light-mode #jobForm .form-label,
 .light-mode #hireEmployeeForm .form-label,
-.light-mode #newJobForm .form-label {
+.light-mode #newJobForm .form-label,
+.light-mode #deptForm .form-label {
     color: #212529 !important;
 }
 
@@ -501,6 +505,11 @@ a.sidebar-link:hover {
     color: #212529;
 }
 
+.left-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
 /* Media Queries */
 @media (max-width: 1350px) {
     /* No changes needed */
@@ -540,7 +549,7 @@ a.sidebar-link:hover {
         padding-top: 70px;
     }
 
-    #sidebar:not(.collapsed) ~ .mobile-toggle-btn {
+    #sidebar:not(.collapsed)~.mobile-toggle-btn {
         display: block;
     }
 }

@@ -63,6 +63,16 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.log("Job table or form not found");
     }
+
+    // Department Table and Form Setup
+    const deptTable = document.getElementById("deptTable");
+    const deptForm = document.getElementById("deptForm");
+    if (deptTable && deptForm) {
+        console.log("Department table and form found");
+        setupTable(deptTable, deptForm, "dept");
+    } else {
+        console.log("Department table or form not found");
+    }
 });
 
 // Generalized Table Setup Function
@@ -86,10 +96,11 @@ function setupTable(table, form, type) {
             rows.sort((a, b) => {
                 const aValue = a.cells[colIndex].textContent.trim();
                 const bValue = b.cells[colIndex].textContent.trim();
-                if (type === "job" && (colIndex === 2 || colIndex === 3)) {
+                if ((type === "job" && (colIndex === 2 || colIndex === 3)) ||
+                    (type === "dept" && (colIndex === 2 || colIndex === 3))) {
                     return isAscending
-                        ? parseFloat(aValue) - parseFloat(bValue)
-                        : parseFloat(bValue) - parseFloat(aValue);
+                        ? parseFloat(aValue || 0) - parseFloat(bValue || 0)
+                        : parseFloat(bValue || 0) - parseFloat(aValue || 0);
                 }
                 return isAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
             });
@@ -140,6 +151,23 @@ function setupTable(table, form, type) {
                     document.getElementById("Job_Title").value = details.job_title || "";
                     document.getElementById("Min_Salary").value = details.min_salary || "";
                     document.getElementById("Max_Salary").value = details.max_salary || "";
+                } else if (type === "dept") {
+                    document.getElementById("Department_ID").value = details.department_id || "";
+                    document.getElementById("Department_Name").value = details.department_name || "";
+                    document.getElementById("Manager_ID").value = details.employee_id || details.manager_id || "";
+                    document.getElementById("Manager_ID_select").value = details.employee_id || details.manager_id || "";
+                    document.getElementById("First_Name").value = details.first_name || "";
+                    document.getElementById("First_Name_select").value = details.first_name || "";
+                    document.getElementById("Last_Name").value = details.last_name || "";
+                    document.getElementById("Last_Name_select").value = details.last_name || "";
+                    document.getElementById("Loc_ID").value = details.loc_id || details.location_id || "";
+                    document.getElementById("Loc_ID_select").value = details.loc_id || details.location_id || "";
+                    document.getElementById("Street_Address").value = details.street_address || "";
+                    document.getElementById("Postal_Code").value = details.postal_code || "";
+                    document.getElementById("City").value = details.city || "";
+                    document.getElementById("State_Province").value = details.state_province || "";
+                    document.getElementById("Country_Name").value = details.country_name || "";
+                    document.getElementById("Region_Name").value = details.region_name || "";
                 }
             } catch (e) {
                 console.error(`${type} JSON parse error:`, e.message, "Raw data:", row.dataset.details);
@@ -161,9 +189,9 @@ function setupTable(table, form, type) {
 
         // Store initial values on load
         const inputs = form.querySelectorAll("input");
-        inputs.forEach(input => {
-            initialValues[input.id] = input.value;
-        });
+        const selects = form.querySelectorAll("select");
+        inputs.forEach(input => initialValues[input.id] = input.value);
+        selects.forEach(select => initialValues[select.id] = select.value);
 
         editButton.addEventListener("click", () => {
             console.log(`${type} Edit button clicked`);
@@ -222,7 +250,6 @@ function setupTable(table, form, type) {
                 deptNameSelect.disabled = false;
                 deptNameInput.style.display = "none";
 
-                // Event listeners for employee dropdowns
                 jobIdSelect.addEventListener("change", () => {
                     const selectedOption = jobIdSelect.options[jobIdSelect.selectedIndex];
                     jobTitleSelect.value = selectedOption.getAttribute("data-title") || "";
@@ -271,10 +298,86 @@ function setupTable(table, form, type) {
                 const maxSalaryInput = document.getElementById("Max_Salary");
 
                 console.log("Switching to edit mode for job");
-                jobIdInput.readOnly = true; // Job ID typically not editable
+                jobIdInput.readOnly = true;
                 jobTitleInput.readOnly = false;
                 minSalaryInput.readOnly = false;
                 maxSalaryInput.readOnly = false;
+            } else if (type === "dept") {
+                const deptIdInput = document.getElementById("Department_ID");
+                const deptNameInput = document.getElementById("Department_Name");
+                const managerIdSelect = document.getElementById("Manager_ID_select");
+                const managerIdInput = document.getElementById("Manager_ID");
+                const firstNameSelect = document.getElementById("First_Name_select");
+                const firstNameInput = document.getElementById("First_Name");
+                const lastNameSelect = document.getElementById("Last_Name_select");
+                const lastNameInput = document.getElementById("Last_Name");
+                const locIdSelect = document.getElementById("Loc_ID_select");
+                const locIdInput = document.getElementById("Loc_ID");
+                const streetAddressInput = document.getElementById("Street_Address");
+                const postalCodeInput = document.getElementById("Postal_Code");
+                const cityInput = document.getElementById("City");
+                const stateProvinceInput = document.getElementById("State_Province");
+                const countryNameInput = document.getElementById("Country_Name");
+                const regionNameInput = document.getElementById("Region_Name");
+
+                console.log("Switching to edit mode for department");
+                deptIdInput.readOnly = true; // ID remains readonly
+                deptNameInput.readOnly = false; // Editable text input
+                managerIdSelect.style.display = "block";
+                managerIdSelect.disabled = false;
+                managerIdInput.style.display = "none";
+                firstNameSelect.style.display = "block";
+                firstNameSelect.disabled = false;
+                firstNameInput.style.display = "none";
+                lastNameSelect.style.display = "block";
+                lastNameSelect.disabled = false;
+                lastNameInput.style.display = "none";
+                locIdSelect.style.display = "block";
+                locIdSelect.disabled = false;
+                locIdInput.style.display = "none";
+                // Keep location details as readonly inputs
+                streetAddressInput.readOnly = true;
+                postalCodeInput.readOnly = true;
+                cityInput.readOnly = true;
+                stateProvinceInput.readOnly = true;
+                countryNameInput.readOnly = true;
+                regionNameInput.readOnly = true;
+
+                // Synchronize Manager dropdowns
+                managerIdSelect.addEventListener("change", () => {
+                    const selectedOption = managerIdSelect.options[managerIdSelect.selectedIndex];
+                    managerIdInput.value = selectedOption.value || "";
+                    firstNameSelect.value = selectedOption.getAttribute("data-first-name") || "";
+                    firstNameInput.value = selectedOption.getAttribute("data-first-name") || "";
+                    lastNameSelect.value = selectedOption.getAttribute("data-last-name") || "";
+                    lastNameInput.value = selectedOption.getAttribute("data-last-name") || "";
+                });
+                firstNameSelect.addEventListener("change", () => {
+                    const selectedOption = firstNameSelect.options[firstNameSelect.selectedIndex];
+                    managerIdSelect.value = selectedOption.getAttribute("data-employee-id") || "";
+                    managerIdInput.value = selectedOption.getAttribute("data-employee-id") || "";
+                    lastNameSelect.value = selectedOption.getAttribute("data-last-name") || "";
+                    lastNameInput.value = selectedOption.getAttribute("data-last-name") || "";
+                });
+                lastNameSelect.addEventListener("change", () => {
+                    const selectedOption = lastNameSelect.options[lastNameSelect.selectedIndex];
+                    managerIdSelect.value = selectedOption.getAttribute("data-employee-id") || "";
+                    managerIdInput.value = selectedOption.getAttribute("data-employee-id") || "";
+                    firstNameSelect.value = selectedOption.getAttribute("data-first-name") || "";
+                    firstNameInput.value = selectedOption.getAttribute("data-first-name") || "";
+                });
+
+                // Synchronize Location dropdown and update readonly fields
+                locIdSelect.addEventListener("change", () => {
+                    const selectedOption = locIdSelect.options[locIdSelect.selectedIndex];
+                    locIdInput.value = selectedOption.value || "";
+                    streetAddressInput.value = selectedOption.getAttribute("data-street-address") || "";
+                    postalCodeInput.value = selectedOption.getAttribute("data-postal-code") || "";
+                    cityInput.value = selectedOption.getAttribute("data-city") || "";
+                    stateProvinceInput.value = selectedOption.getAttribute("data-state-province") || "";
+                    countryNameInput.value = selectedOption.getAttribute("data-country-name") || "";
+                    regionNameInput.value = selectedOption.getAttribute("data-region-name") || "";
+                });
             }
 
             alertContainer.innerHTML = `
@@ -290,7 +393,6 @@ function setupTable(table, form, type) {
             console.log(`${type} Save button clicked`);
 
             if (type === "employee") {
-                // Employee save logic (unchanged for now)
                 const idInput = document.getElementById("ID");
                 const firstNameInput = document.getElementById("First_Name");
                 const lastNameInput = document.getElementById("Last_Name");
@@ -381,52 +483,152 @@ function setupTable(table, form, type) {
                     },
                     body: JSON.stringify(jobData)
                 })
-                .then(response => response.json())
-                .then(data => {
-                    alertContainer.style.display = "block";
-                    if (data.status === "success") {
-                        jobIdInput.readOnly = true;
-                        jobTitleInput.readOnly = true;
-                        minSalaryInput.readOnly = true;
-                        maxSalaryInput.readOnly = true;
-                        saveButton.style.display = "none";
-                        cancelButton.style.display = "none";
-                        editButton.style.display = "inline-block";
+                    .then(response => response.json())
+                    .then(data => {
+                        alertContainer.style.display = "block";
+                        if (data.status === "success") {
+                            jobIdInput.readOnly = true;
+                            jobTitleInput.readOnly = true;
+                            minSalaryInput.readOnly = true;
+                            maxSalaryInput.readOnly = true;
+                            saveButton.style.display = "none";
+                            cancelButton.style.display = "none";
+                            editButton.style.display = "inline-block";
 
-                        alertContainer.innerHTML = `
+                            alertContainer.innerHTML = `
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 ${data.message}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         `;
 
-                        // Update table row
-                        const row = tbody.querySelector(`tr[data-details*="${jobData.job_id}"]`);
-                        if (row) {
-                            row.cells[1].textContent = jobData.job_title || '';
-                            row.cells[2].textContent = jobData.min_salary || '';
-                            row.cells[3].textContent = jobData.max_salary || '';
-                            row.dataset.details = JSON.stringify(jobData);
-                        }
-                    } else {
-                        alertContainer.innerHTML = `
+                            const row = tbody.querySelector(`tr[data-details*="${jobData.job_id}"]`);
+                            if (row) {
+                                row.cells[1].textContent = jobData.job_title || '';
+                                row.cells[2].textContent = jobData.min_salary || '';
+                                row.cells[3].textContent = jobData.max_salary || '';
+                                row.dataset.details = JSON.stringify(jobData);
+                            }
+                        } else {
+                            alertContainer.innerHTML = `
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 ${data.message || data.error}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         `;
-                    }
-                })
-                .catch(error => {
-                    console.error("Save error:", error);
-                    alertContainer.style.display = "block";
-                    alertContainer.innerHTML = `
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Save error:", error);
+                        alertContainer.style.display = "block";
+                        alertContainer.innerHTML = `
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             Error updating job: ${error}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     `;
-                });
+                    });
+            } else if (type === "dept") {
+                const deptIdInput = document.getElementById("Department_ID");
+                const deptNameInput = document.getElementById("Department_Name");
+                const managerIdSelect = document.getElementById("Manager_ID_select");
+                const managerIdInput = document.getElementById("Manager_ID");
+                const firstNameSelect = document.getElementById("First_Name_select");
+                const firstNameInput = document.getElementById("First_Name");
+                const lastNameSelect = document.getElementById("Last_Name_select");
+                const lastNameInput = document.getElementById("Last_Name");
+                const locIdSelect = document.getElementById("Loc_ID_select");
+                const locIdInput = document.getElementById("Loc_ID");
+                const streetAddressInput = document.getElementById("Street_Address");
+                const postalCodeInput = document.getElementById("Postal_Code");
+                const cityInput = document.getElementById("City");
+                const stateProvinceInput = document.getElementById("State_Province");
+                const countryNameInput = document.getElementById("Country_Name");
+                const regionNameInput = document.getElementById("Region_Name");
+
+                // Update input fields with selected values
+                managerIdInput.value = managerIdSelect.value;
+                firstNameInput.value = firstNameSelect.value;
+                lastNameInput.value = lastNameSelect.value;
+                locIdInput.value = locIdSelect.value;
+
+                const deptData = {
+                    dept_id: deptIdInput.value,
+                    new_name: deptNameInput.value || null,
+                    manager_id: managerIdSelect.value || null,
+                    location_id: locIdSelect.value || null
+                };
+
+                fetch('/update_department', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(deptData)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        alertContainer.style.display = "block";
+                        if (data.success) { // Success case based on your Flask result
+                            deptNameInput.readOnly = true;
+                            managerIdSelect.style.display = "none";
+                            managerIdSelect.disabled = true;
+                            managerIdInput.style.display = "block";
+                            firstNameSelect.style.display = "none";
+                            firstNameSelect.disabled = true;
+                            firstNameInput.style.display = "block";
+                            lastNameSelect.style.display = "none";
+                            lastNameSelect.disabled = true;
+                            lastNameInput.style.display = "block";
+                            locIdSelect.style.display = "none";
+                            locIdSelect.disabled = true;
+                            locIdInput.style.display = "block";
+                            saveButton.style.display = "none";
+                            cancelButton.style.display = "none";
+                            editButton.style.display = "inline-block";
+
+                            alertContainer.innerHTML = `
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    Department updated successfully
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            `;
+
+                            const row = tbody.querySelector(`tr[data-details*="${deptData.dept_id}"]`);
+                            if (row) {
+                                row.cells[1].textContent = deptData.new_name || '';
+                                row.cells[2].textContent = deptData.manager_id || '';
+                                row.cells[3].textContent = deptData.location_id || '';
+                                const updatedDetails = JSON.parse(row.dataset.details);
+                                updatedDetails.department_name = deptData.new_name;
+                                updatedDetails.employee_id = deptData.manager_id; // or manager_id
+                                updatedDetails.loc_id = deptData.location_id; // or location_id
+                                row.dataset.details = JSON.stringify(updatedDetails);
+                            }
+                        } else {
+                            alertContainer.innerHTML = `
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    ${data.error || "Failed to update department"}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Save error:", error);
+                        alertContainer.style.display = "block";
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                Error updating department: ${error.message}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `;
+                    });
             }
         });
 
@@ -435,6 +637,8 @@ function setupTable(table, form, type) {
             Object.keys(initialValues).forEach(id => {
                 const element = document.getElementById(id);
                 if (element && element.tagName === "INPUT") {
+                    element.value = initialValues[id];
+                } else if (element && element.tagName === "SELECT") {
                     element.value = initialValues[id];
                 }
             });
@@ -500,19 +704,69 @@ function setupTable(table, form, type) {
                 jobTitleInput.readOnly = true;
                 minSalaryInput.readOnly = true;
                 maxSalaryInput.readOnly = true;
+            } else if (type === "dept") {
+                const deptIdInput = document.getElementById("Department_ID");
+                const deptNameInput = document.getElementById("Department_Name");
+                const managerIdSelect = document.getElementById("Manager_ID_select");
+                const managerIdInput = document.getElementById("Manager_ID");
+                const firstNameSelect = document.getElementById("First_Name_select");
+                const firstNameInput = document.getElementById("First_Name");
+                const lastNameSelect = document.getElementById("Last_Name_select");
+                const lastNameInput = document.getElementById("Last_Name");
+                const locIdSelect = document.getElementById("Loc_ID_select");
+                const locIdInput = document.getElementById("Loc_ID");
+                const streetAddressInput = document.getElementById("Street_Address");
+                const postalCodeInput = document.getElementById("Postal_Code");
+                const cityInput = document.getElementById("City");
+                const stateProvinceInput = document.getElementById("State_Province");
+                const countryNameInput = document.getElementById("Country_Name");
+                const regionNameInput = document.getElementById("Region_Name");
+
+                console.log("Switching to view mode for department");
+                deptNameInput.readOnly = true;
+                managerIdSelect.style.display = "none";
+                managerIdSelect.disabled = true;
+                managerIdInput.style.display = "block";
+                firstNameSelect.style.display = "none";
+                firstNameSelect.disabled = true;
+                firstNameInput.style.display = "block";
+                lastNameSelect.style.display = "none";
+                lastNameSelect.disabled = true;
+                lastNameInput.style.display = "block";
+                locIdSelect.style.display = "none";
+                locIdSelect.disabled = true;
+                locIdInput.style.display = "block";
+                streetAddressInput.readOnly = true;
+                postalCodeInput.readOnly = true;
+                cityInput.readOnly = true;
+                stateProvinceInput.readOnly = true;
+                countryNameInput.readOnly = true;
+                regionNameInput.readOnly = true;
+
+                // Ensure location details revert to initial values
+                const initialLocId = initialValues["Loc_ID"];
+                const matchingOption = Array.from(locIdSelect.options).find(option => option.value === initialLocId);
+                if (matchingOption) {
+                    streetAddressInput.value = matchingOption.getAttribute("data-street-address") || "";
+                    postalCodeInput.value = matchingOption.getAttribute("data-postal-code") || "";
+                    cityInput.value = matchingOption.getAttribute("data-city") || "";
+                    stateProvinceInput.value = matchingOption.getAttribute("data-state-province") || "";
+                    countryNameInput.value = matchingOption.getAttribute("data-country-name") || "";
+                    regionNameInput.value = matchingOption.getAttribute("data-region-name") || "";
+                }
+
+                saveButton.style.display = "none";
+                cancelButton.style.display = "none";
+                editButton.style.display = "inline-block";
+
+                alertContainer.innerHTML = `
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        Edit mode cancelled
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+                alertContainer.style.display = "block";
             }
-
-            saveButton.style.display = "none";
-            cancelButton.style.display = "none";
-            editButton.style.display = "inline-block";
-
-            alertContainer.innerHTML = `
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    Edit mode cancelled
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            alertContainer.style.display = "block";
         });
     } else {
         console.log(`${type} Edit, Save, Cancel buttons or alert container not found`);

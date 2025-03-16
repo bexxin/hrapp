@@ -1,0 +1,192 @@
+<!-- templates/manage_department.html -->
+{% extends "base.html" %}
+{% block title %}Manage Departments{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        {% if dept_error %}
+            <p style="color: red;">{{ dept_error }}</p>
+        {% else %}
+            {% if departments %}
+                <div class="table-container">
+                    <table class="table table-dark table-hover" id="deptTable">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="0" title="Click to sort by Department ID"><span>Department ID</span> <i class="bi bi-arrow-down-up"></i></th>
+                                <th class="sortable" data-sort="1" title="Click to sort by Department Name"><span>Department Name</span> <i class="bi bi-arrow-down-up"></i></th>
+                                <th class="sortable" data-sort="2" title="Click to sort by Manager ID"><span>Manager ID</span> <i class="bi bi-arrow-down-up"></i></th>
+                                <th class="sortable" data-sort="3" title="Click to sort by Location ID"><span>Location ID</span> <i class="bi bi-arrow-down-up"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dept in departments %}
+                                <tr class="dept-row" data-details='{{ dept | tojson | safe }}'>
+                                    <td>{{ dept.department_id | default('') }}</td>
+                                    <td>{{ dept.department_name | default('') }}</td>
+                                    <td>{{ dept.manager_id | default('') }}</td>
+                                    <td>{{ dept.location_id | default('') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div id="deptForm" class="mt-3">
+                    <h3>Department Details</h3>
+                    <div id="alertContainer" class="mb-3" style="display: none;"></div>
+                    <div class="d-flex justify-content-start gap-2 mb-3">
+                        <button id="editButton" class="btn btn-primary">Edit</button>
+                        <button id="saveButton" class="btn btn-success" style="display: none;">Save</button>
+                        <button id="cancelButton" class="btn btn-secondary" style="display: none;">Cancel</button>
+                    </div>
+                    <div class="accordion accordion-flush" id="deptAccordion">
+                        <!-- Department Group -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingDept">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDept" aria-expanded="true" aria-controls="collapseDept">
+                                    Department
+                                </button>
+                            </h2>
+                            <div id="collapseDept" class="accordion-collapse collapse show" aria-labelledby="headingDept">
+                                <div class="accordion-body">
+                                    <div class="row tight-horizontal">
+                                        <div class="fixed-id">
+                                            <label class="form-label" for="Department_ID">Department ID:</label>
+                                            <input type="text" class="form-control short-input" id="Department_ID" value="{{ first_dept.department_id | default('') }}" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="Department_Name">Department Name:</label>
+                                            <input type="text" class="form-control" id="Department_Name" value="{{ first_dept.department_name | default('') }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Manager Group -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingManager">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManager" aria-expanded="false" aria-controls="collapseManager">
+                                    Manager Details
+                                </button>
+                            </h2>
+                            <div id="collapseManager" class="accordion-collapse collapse" aria-labelledby="headingManager">
+                                <div class="accordion-body">
+                                    <div class="row tight-horizontal">
+                                        <div class="fixed-id">
+                                            <label class="form-label" for="Manager_ID">Manager ID:</label>
+                                            <select class="form-select short-input" id="Manager_ID_select" disabled style="display: none;">
+                                                <option value="">Select Manager ID</option>
+                                                {% for emp in employees %}
+                                                    <option value="{{ emp.employee_id }}"
+                                                            data-first-name="{{ emp.first_name }}"
+                                                            data-last-name="{{ emp.last_name }}"
+                                                            {% if emp.employee_id == first_dept.manager_id %}selected{% endif %}>
+                                                        {{ emp.employee_id }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            <input type="text" class="form-control short-input" id="Manager_ID" value="{{ first_dept.manager_id | default('') }}" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="First_Name">First Name:</label>
+                                            <select class="form-select" id="First_Name_select" disabled style="display: none;">
+                                                <option value="">Select First Name</option>
+                                                {% for emp in employees %}
+                                                    <option value="{{ emp.first_name }}"
+                                                            data-employee-id="{{ emp.employee_id }}"
+                                                            data-last-name="{{ emp.last_name }}"
+                                                            {% if emp.first_name == first_dept.first_name %}selected{% endif %}>
+                                                        {{ emp.first_name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            <input type="text" class="form-control" id="First_Name" value="{{ first_dept.first_name | default('') }}" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="Last_Name">Last Name:</label>
+                                            <select class="form-select" id="Last_Name_select" disabled style="display: none;">
+                                                <option value="">Select Last Name</option>
+                                                {% for emp in employees %}
+                                                    <option value="{{ emp.last_name }}"
+                                                            data-employee-id="{{ emp.employee_id }}"
+                                                            data-first-name="{{ emp.first_name }}"
+                                                            {% if emp.last_name == first_dept.last_name %}selected{% endif %}>
+                                                        {{ emp.last_name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            <input type="text" class="form-control" id="Last_Name" value="{{ first_dept.last_name | default('') }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Location Group -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingLocation">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLocation" aria-expanded="false" aria-controls="collapseLocation">
+                                    Location Details
+                                </button>
+                            </h2>
+                            <div id="collapseLocation" class="accordion-collapse collapse" aria-labelledby="headingLocation">
+                                <div class="accordion-body">
+                                    <div class="row tight-horizontal">
+                                        <div class="fixed-id">
+                                            <label class="form-label" for="Loc_ID">Location ID:</label>
+                                            <select class="form-select short-input" id="Loc_ID_select" disabled style="display: none;">
+                                                <option value="">Select Location ID</option>
+                                                {% for loc in locations %}
+                                                    <option value="{{ loc.location_id }}"
+                                                            data-street-address="{{ loc.street_address }}"
+                                                            data-postal-code="{{ loc.postal_code }}"
+                                                            data-city="{{ loc.city }}"
+                                                            data-state-province="{{ loc.state_province }}"
+                                                            data-country-name="{{ loc.country_name }}"
+                                                            data-region-name="{{ loc.region_name }}"
+                                                            {% if loc.location_id == first_dept.location_id %}selected{% endif %}>
+                                                        {{ loc.location_id }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            <input type="text" class="form-control short-input" id="Loc_ID" value="{{ first_dept.location_id | default('') }}" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="Street_Address">Street Address:</label>
+                                            <input type="text" class="form-control" id="Street_Address" value="{{ first_dept.street_address | default('') }}" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="Postal_Code">Postal Code:</label>
+                                            <input type="text" class="form-control" id="Postal_Code" value="{{ first_dept.postal_code | default('') }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row tight-horizontal">
+                                        <div class="fixed-id"></div> <!-- Empty spacer -->
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="City">City:</label>
+                                            <input type="text" class="form-control" id="City" value="{{ first_dept.city | default('') }}" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="State_Province">State/Province:</label>
+                                            <input type="text" class="form-control" id="State_Province" value="{{ first_dept.state_province | default('') }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row tight-horizontal">
+                                        <div class="fixed-id"></div> <!-- Empty spacer -->
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="Country_Name">Country:</label>
+                                            <input type="text" class="form-control" id="Country_Name" value="{{ first_dept.country_name | default('') }}" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="Region_Name">Region:</label>
+                                            <input type="text" class="form-control" id="Region_Name" value="{{ first_dept.region_name | default('') }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p>No department data available.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}
