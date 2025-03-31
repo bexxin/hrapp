@@ -67,7 +67,7 @@ def dashboard_chart():
 # endregion
 
 
-# region EMPLPOYEE
+# region EMPLOYEE
 @app.route("/hire_employee", methods=["GET"])
 def hire_employee():
     # Fetch data for dropdowns
@@ -157,11 +157,36 @@ def manage_employee():
         first_employee=first_employee,
         first_manager=first_manager,
     )
+@app.route("/update_employee", methods=["PUT"])
+def api_update_employee():
+    try:
+        data = request.json
+        emp_id = data.get("employee_id")
+
+        if not emp_id:
+            return jsonify({"success": False, "error": "Employee ID is required"}), 400
+
+        result = update_employee(
+            emp_id=emp_id,
+            first_name=data.get("first_name"),
+            last_name=data.get("last_name"),
+            email=data.get("email"),
+            phone=data.get("phone"),
+            job_id=data.get("job_id"),
+            salary=data.get("salary"),
+            commission_pct=data.get("commission_pct"),
+            manager_id=data.get("manager_id"),
+            department_id=data.get("department_id"),
+        )
+
+        return jsonify(result), 200 if result["success"] else 500
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @app.route("/delete_employee", methods=["DELETE"])
 def delete_emp():
-    emp_id = request.json.get("employee_id")
+    emp_id = request.json.get("id")
     if not emp_id:
         return jsonify({"error": "employee_id is required"}), 400
 
@@ -234,7 +259,7 @@ def manage_job():
 
 @app.route("/delete_job", methods=["DELETE"])
 def api_delete_job():
-    job_id = request.json.get("job_id")
+    job_id = request.json.get("id")
     if not job_id:
         return jsonify({"error": "job_id is required"}), 400
 
@@ -363,7 +388,7 @@ def api_update_department():
 
 @app.route("/delete_department", methods=["DELETE"])
 def api_delete_department():
-    dept_id = request.json.get("dept_id")
+    dept_id = request.json.get("id")
     if not dept_id:
         return jsonify({"error": "dept_id is required"}), 400
 

@@ -192,6 +192,22 @@ def add_employee(first_name, last_name, email, phone, hire_date, job_id, salary,
         cursor.close()
         connection.close()
 
+        
+def update_employee(emp_id, first_name=None, last_name=None, email=None, phone=None, job_id=None, salary=None, commission_pct=None, manager_id=None, department_id=None):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        cursor.callproc("update_employee_sp", [
+            emp_id, first_name, last_name, email, phone, job_id, salary, commission_pct, manager_id, department_id
+        ])
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return {"success": True, "message": "Employee updated successfully."}
+    except cx_Oracle.DatabaseError as error:
+        return {"success": False, "error": str(error)}
+
 
 def fetch_manage_departments():
     try:

@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 if platform.system() == "Windows":
+    # cx_Oracle.init_oracle_client(lib_dir=r"C:/instantclient_23_7/instantclient_23_7")
     cx_Oracle.init_oracle_client(lib_dir=r"C:\instantclient_23_7")
 elif platform.system() == "Linux":
     cx_Oracle.init_oracle_client(lib_dir="/opt/oracle/instantclient_23_7")
@@ -55,7 +56,7 @@ def execute_sql_file(file_path):
             for i, statement in enumerate(statements):
                 statement = statement.strip()
                 if statement:
-                    print(f"Executing statement {i+1}: {statement}")
+                    print(f"Executing statement {i + 1}: {statement}")
                     cursor.execute(statement)
         connection.commit()
         print(f"{os.path.basename(file_path)} executed successfully.")

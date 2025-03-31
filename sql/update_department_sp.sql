@@ -23,3 +23,5 @@ BEGIN
     WHERE department_id = p_dept_id;
 
     COMMIT;
+END update_department;
+/

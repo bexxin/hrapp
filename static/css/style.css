@@ -266,6 +266,7 @@ a.sidebar-link:hover {
     background-color: #212529;
     color: #FFF;
     --bs-table-hover-bg: #4a4c4f;
+    --bs-table-active-bg: #4a4c4f;
 }
 
 .table-container .table-dark thead th {
@@ -278,14 +279,11 @@ a.sidebar-link:hover {
     color: #FFF !important;
 }
 
-.table-dark.table-hover tbody tr:hover {
-    background-color: #4a4c4f !important;
-}
-
 .light-mode .table-container .table-dark {
     background-color: #E9ECEF !important;
     color: #212529 !important;
     --bs-table-hover-bg: #DEE2E6 !important;
+    --bs-table-active-bg: #DEE2E6 !important;
 }
 
 .light-mode .table-container .table-dark thead th {
@@ -296,10 +294,6 @@ a.sidebar-link:hover {
 .light-mode .table-container .table-dark td {
     background-color: #FFF !important;
     color: #212529 !important;
-}
-
-.light-mode .table-container .table-dark.table-hover tbody tr:hover {
-    background-color: #DEE2E6 !important;
 }
 
 /* Scrollbar Styles */

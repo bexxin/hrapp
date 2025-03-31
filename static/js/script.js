@@ -75,10 +75,48 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+// Function to reset form fields to view mode
+function resetToViewMode(type, initialValues) {
+    console.log(`Resetting to view mode for ${type}`);
+
+    // Generic reset for inputs and selects
+    Object.keys(initialValues).forEach(id => {
+        const element = document.getElementById(id);
+        if (element && element.tagName === "INPUT") {
+            element.value = initialValues[id];
+            element.readOnly = true; // Inputs should be readonly in view mode
+        } else if (element && element.tagName === "SELECT") {
+            element.value = initialValues[id];
+            element.style.display = "none"; // Hide selects in view mode
+            element.disabled = true;
+        }
+    });
+
+    // Type-specific reset logic (employee, job, dept)
+    if (type === "employee") {
+        // Employee-specific resets...
+    } else if (type === "job") {
+        // Job-specific resets...
+    } else if (type === "dept") {
+        // Department-specific resets...
+    }
+
+    // Toggle button visibility
+    document.getElementById("saveButton").style.display = "none";
+    document.getElementById("cancelButton").style.display = "none";
+    document.getElementById("deleteButton").style.display = "none";
+    document.getElementById("editButton").style.display = "inline-block";
+
+    console.log(`${type} reset completed.`);
+}
+
 // Generalized Table Setup Function
 function setupTable(table, form, type) {
+    // Use the existing initialValues variable
     const tbody = table.querySelector("tbody");
     const headers = table.querySelectorAll(".sortable");
+    let selectedRow = null;
+
 
     // Sorting headers
     headers.forEach(header => {
@@ -117,6 +155,13 @@ function setupTable(table, form, type) {
     rows.forEach(row => {
         row.addEventListener("click", () => {
             console.log(`${type} row clicked, raw data-details:`, row.dataset.details);
+            if (selectedRow) {
+                selectedRow.classList.remove("table-active");
+            }
+            row.classList.add("table-active");
+            selectedRow = row;
+            console.log("there is a row selected", selectedRow)
+
             try {
                 const details = JSON.parse(row.dataset.details);
                 console.log(`${type} parsed details:`, details);
@@ -175,16 +220,18 @@ function setupTable(table, form, type) {
         });
     });
 
-    // Edit button setup with Save and Cancel
+    // Edit button setup with Save, Delete and Cancel
     const editButton = document.getElementById("editButton");
     const saveButton = document.getElementById("saveButton");
+    const deleteButton = document.getElementById("deleteButton");
     const cancelButton = document.getElementById("cancelButton");
     const alertContainer = document.getElementById("alertContainer");
+
 
     // Store initial form values for Cancel
     const initialValues = {};
 
-    if (editButton && saveButton && cancelButton && alertContainer) {
+    if (editButton && saveButton && deleteButton && cancelButton && alertContainer) {
         console.log(`${type} Edit, Save, Cancel buttons and alert container found`);
 
         // Store initial values on load
@@ -197,6 +244,7 @@ function setupTable(table, form, type) {
             console.log(`${type} Edit button clicked`);
             saveButton.style.display = "inline-block";
             cancelButton.style.display = "inline-block";
+            deleteButton.style.display = "inline-block";
             editButton.style.display = "none";
 
             if (type === "employee") {
@@ -454,6 +502,7 @@ function setupTable(table, form, type) {
 
                 saveButton.style.display = "none";
                 cancelButton.style.display = "none";
+                deleteButton.style.display = "none";
                 editButton.style.display = "inline-block";
 
                 alertContainer.innerHTML = `
@@ -493,6 +542,7 @@ function setupTable(table, form, type) {
                             maxSalaryInput.readOnly = true;
                             saveButton.style.display = "none";
                             cancelButton.style.display = "none";
+                            deleteButton.style.display = "none";
                             editButton.style.display = "inline-block";
 
                             alertContainer.innerHTML = `
@@ -590,6 +640,7 @@ function setupTable(table, form, type) {
                             locIdInput.style.display = "block";
                             saveButton.style.display = "none";
                             cancelButton.style.display = "none";
+                            deleteButton.style.display = "none";
                             editButton.style.display = "inline-block";
 
                             alertContainer.innerHTML = `
@@ -631,6 +682,88 @@ function setupTable(table, form, type) {
                     });
             }
         });
+
+
+
+        if (deleteButton) {
+            console.log(`${type} Delete button found`);
+            deleteButton.addEventListener("click", () => {
+                if (!selectedRow) {
+                    alert("No row selected for deletion!");
+                    return;
+                }
+                console.log(selectedRow)
+
+                try {
+                    details = JSON.parse(selectedRow.dataset.details)
+                    console.log("Parsed details:", details);
+                } catch (error) {
+                    console.error("Error parsing dataset.details:", error);
+                    alert("Error: Could not parse row details.");
+                    return;
+                }
+
+                let apiEndpoint = "";
+                let idValue;
+
+
+                if (type === "employee") {
+                    idValue = details.employee_id || details[0]
+                    apiEndpoint = "/delete_employee";
+                } else if (type === "job") {
+                    idValue = details.job_id || details[0]
+                    apiEndpoint = "/delete_job";
+                } else if (type === "dept") {
+                    idValue = details.department_id || details[0]
+                    apiEndpoint = "/delete_department";
+                }
+
+
+                if (!idValue) {
+                    alert("No valid ID found for deletion.", { idValue });
+                    return;
+                }
+
+                if (!confirm(`Are you sure you want to delete this ${type} (ID: ${idValue})?`)) {
+                    return;
+                }
+
+                console.log(`Deleting ${type} with ID: ${idValue}`);
+
+                fetch(apiEndpoint, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ id: idValue }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully!`);
+                            selectedRow.remove(); // Remove the row from table
+                            selectedRow = null; // Reset selection
+                            resetToViewMode(type, initialValues);
+                            alertContainer.innerHTML = `
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    Deleted successfully
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            `;
+                            alertContainer.style.display = "block";
+                        } else {
+                            alert(`Error: ${data.error || "Failed to delete"}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`Error deleting ${type}:`, error);
+                        alert("Server error. Please try again.");
+                    });
+            });
+        } else {
+            console.log(`${type} Delete button not found`);
+        }
+
 
         cancelButton.addEventListener("click", () => {
             console.log(`${type} Cancel button clicked`);
@@ -693,6 +826,12 @@ function setupTable(table, form, type) {
                 deptNameSelect.style.display = "none";
                 deptNameSelect.disabled = true;
                 deptNameInput.style.display = "block";
+
+                // Add button visibility toggling logic here
+                saveButton.style.display = "none";
+                cancelButton.style.display = "none";
+                deleteButton.style.display = "none";
+                editButton.style.display = "inline-block";
             } else if (type === "job") {
                 const jobIdInput = document.getElementById("Job_ID");
                 const jobTitleInput = document.getElementById("Job_Title");
@@ -704,6 +843,12 @@ function setupTable(table, form, type) {
                 jobTitleInput.readOnly = true;
                 minSalaryInput.readOnly = true;
                 maxSalaryInput.readOnly = true;
+
+                // Add button visibility toggling logic here
+                saveButton.style.display = "none";
+                cancelButton.style.display = "none";
+                deleteButton.style.display = "none";
+                editButton.style.display = "inline-block";
             } else if (type === "dept") {
                 const deptIdInput = document.getElementById("Department_ID");
                 const deptNameInput = document.getElementById("Department_Name");
@@ -755,8 +900,10 @@ function setupTable(table, form, type) {
                     regionNameInput.value = matchingOption.getAttribute("data-region-name") || "";
                 }
 
+                // Add button visibility toggling logic here
                 saveButton.style.display = "none";
                 cancelButton.style.display = "none";
+                deleteButton.style.display = "none";
                 editButton.style.display = "inline-block";
 
                 alertContainer.innerHTML = `
