@@ -18,6 +18,8 @@ else:
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_DSN = os.getenv("DB_DSN")
+SECRET_KEY = os.getenv("SECRET_KEY")
+
 
 pool = None
 
@@ -90,3 +92,19 @@ def run_sql_scripts():
         execute_sql_file(full_path)
 
     print("Database setup complete")
+
+
+def run_create_users_procedure():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    try:
+        print("Running create_users_table_sp procedure...")
+        cursor.callproc("create_users_table_sp")  # Call the stored procedure
+        connection.commit()  # Commit the changes made by the procedure
+        print("Procedure executed successfully.")
+    except cx_Oracle.Error as error:
+        print(f"Error executing stored procedure: {error}")
+        raise  # Reraise the error for debugging
+    finally:
+        cursor.close()
+        connection.close()

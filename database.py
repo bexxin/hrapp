@@ -3,6 +3,34 @@ import cx_Oracle
 from setup_database import get_db_connection
 
 
+def get_user_credentials(username):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        query = "SELECT user_id, username, email, password_hash FROM HR_USERS WHERE username = :username"
+        cursor.execute(query, {"username": username})
+        result = cursor.fetchone()
+
+        if result:
+            # Return user credentials as a dictionary
+            return {
+                "success": True,
+                "user": {"user_id": result[0], "username": result[1], "email": result[2], "password_hash": result[3]},
+            }
+        else:
+            print("User not found!")  # Debugging
+            return {"success": False, "error": "User not found."}
+    except cx_Oracle.Error as error:
+        print(f"Database error: {error}")
+        return {"success": False, "error": str(error)}  # Handle database-specific errors
+    except Exception as error:
+        print(f"Error fetching user credentials: {error}")
+        return {"success": False, "error": "An error occurred while retrieving user data."}
+    finally:
+        cursor.close()
+        connection.close()
+
+
 def fetch_employees():
     try:
         connection = get_db_connection()
@@ -192,15 +220,27 @@ def add_employee(first_name, last_name, email, phone, hire_date, job_id, salary,
         cursor.close()
         connection.close()
 
-        
-def update_employee(emp_id, first_name=None, last_name=None, email=None, phone=None, job_id=None, salary=None, commission_pct=None, manager_id=None, department_id=None):
+
+def update_employee(
+    emp_id,
+    first_name=None,
+    last_name=None,
+    email=None,
+    phone=None,
+    job_id=None,
+    salary=None,
+    commission_pct=None,
+    manager_id=None,
+    department_id=None,
+):
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
 
-        cursor.callproc("update_employee_sp", [
-            emp_id, first_name, last_name, email, phone, job_id, salary, commission_pct, manager_id, department_id
-        ])
+        cursor.callproc(
+            "update_employee_sp",
+            [emp_id, first_name, last_name, email, phone, job_id, salary, commission_pct, manager_id, department_id],
+        )
         connection.commit()
         cursor.close()
         connection.close()
@@ -355,3 +395,20 @@ def fetch_locations():
     except cx_Oracle.Error as error:
         print(f"Database error: {error}")
         return [], [], str(error)
+
+
+def fetch_users():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        query = "SELECT user_id, username, email, created_at, password_hash FROM HR_USERS"
+        cursor.execute(query)
+        table_data = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+        return table_data, column_names, None  # Success: no error
+    except cx_Oracle.Error as error:
+        print(f"Database error: {error}")
+        return [], [], str(error)  # Return error
+    finally:
+        cursor.close()
+        connection.close()

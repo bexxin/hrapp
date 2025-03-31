@@ -23,7 +23,7 @@ BEGIN
     
     SELECT * INTO v_current FROM hr_employees WHERE employee_id = p_emp_id;
 
-   
+
     UPDATE hr_employees
     SET first_name = NVL(p_first_name, v_current.first_name),
         last_name = NVL(p_last_name, v_current.last_name),

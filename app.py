@@ -2,7 +2,10 @@
 
 # region IMPORTS
 import datetime
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session, flash
+from werkzeug.security import check_password_hash
+from functools import wraps
+from setup_database import SECRET_KEY
 from database import (
     add_job,
     delete_department,
@@ -13,17 +16,75 @@ from database import (
     fetch_manage_departments,
     fetch_manage_employees,
     fetch_jobs,
+    fetch_users,
     add_employee,
     get_job_desc,
     update_department,
     update_job_details,
     fetch_locations,
+    update_employee,
+    get_user_credentials,
 )
 import setup_database
 
 # endregion
 
 app = Flask(__name__)
+app.secret_key = SECRET_KEY  # Replace with a secure, random value
+
+# region Login - Logout
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:  # If no user_id in session, user is not logged in
+            flash("You must log in to access this page.", "warning")
+            return redirect(url_for("login"))  # Redirect to the login page
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        print(f"Username: {username}, Password: {password}")  # Debugging
+
+        try:
+            result = get_user_credentials(username)
+            print(f"Result: {result}")  # Debugging
+
+            if result["success"]:
+                user = result["user"]
+                if check_password_hash(user["password_hash"], password):
+                    session["user_id"] = user["user_id"]
+                    session["username"] = user["username"]
+                    flash("Login successful!", "success")
+                    return redirect(url_for("index"))  # Redirect to index.html
+                else:
+                    flash("Invalid username or password.", "danger")
+            else:
+                flash(result["error"], "danger")
+        except Exception as error:
+            print(f"Error during login: {error}")  # Debugging
+            flash("An error occurred. Please try again later.", "danger")
+
+    return render_template("login.html")  # Render login page for GET requests
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    # Clear the session data
+    session.clear()
+    flash("You have been logged out successfully.", "success")
+    return redirect(url_for("login"))
+
+
+# Endregion
 
 
 def serialize_employee_data(emp_data):
@@ -38,15 +99,20 @@ def serialize_employee_data(emp_data):
 
 
 @app.route("/")
+@login_required
 def index():
     return render_template("index.html")
 
 
 # region DASHBOARD
 @app.route("/tables")
+@login_required
 def tables():
     emp_data, emp_columns, emp_error = fetch_employees()
     dept_data, dept_columns, dept_error = fetch_departments()
+    job_data, job_columns, job_error = fetch_jobs()
+    user_data, user_columns, user_error = fetch_users()
+
     emp_data = serialize_employee_data(emp_data)
     return render_template(
         "tables.html",
@@ -56,10 +122,17 @@ def tables():
         dept_data=dept_data,
         dept_columns=dept_columns,
         dept_error=dept_error,
+        job_data=job_data,
+        job_columns=job_columns,
+        job_error=job_error,
+        user_data=user_data,
+        user_columns=user_columns,
+        user_error=user_error,
     )
 
 
 @app.route("/dashboard_chart")
+@login_required
 def dashboard_chart():
     return render_template("dashboard_chart.html")
 
@@ -69,6 +142,7 @@ def dashboard_chart():
 
 # region EMPLOYEE
 @app.route("/hire_employee", methods=["GET"])
+@login_required
 def hire_employee():
     # Fetch data for dropdowns
     emp_data, emp_columns, emp_error = fetch_manage_employees()
@@ -86,6 +160,7 @@ def hire_employee():
 
 
 @app.route("/hire_employee", methods=["POST"])
+@login_required
 def api_hire_employee():
     try:
         data = request.json
@@ -120,6 +195,7 @@ def api_hire_employee():
 
 
 @app.route("/manage_employee")
+@login_required
 def manage_employee():
     emp_data, emp_columns, emp_error = fetch_manage_employees()
     emp_data = serialize_employee_data(emp_data)
@@ -157,7 +233,10 @@ def manage_employee():
         first_employee=first_employee,
         first_manager=first_manager,
     )
+
+
 @app.route("/update_employee", methods=["PUT"])
+@login_required
 def api_update_employee():
     try:
         data = request.json
@@ -185,6 +264,7 @@ def api_update_employee():
 
 
 @app.route("/delete_employee", methods=["DELETE"])
+@login_required
 def delete_emp():
     emp_id = request.json.get("id")
     if not emp_id:
@@ -199,6 +279,7 @@ def delete_emp():
 
 # region JOB
 @app.route("/get_job_title", methods=["GET"])
+@login_required
 def api_get_job_title():
     job_id = request.args.get("job_id")
     if not job_id:
@@ -208,6 +289,7 @@ def api_get_job_title():
 
 
 @app.route("/update_job", methods=["POST"])
+@login_required
 def api_update_job():
     try:
         data = request.json
@@ -229,11 +311,13 @@ def api_update_job():
 
 # app.py (add these routes)
 @app.route("/new_job", methods=["GET"])
+@login_required
 def new_job_page():
     return render_template("new_job.html")
 
 
 @app.route("/new_job", methods=["POST"])
+@login_required
 def new_job():
     try:
         data = request.json
@@ -248,6 +332,7 @@ def new_job():
 
 
 @app.route("/manage_job")
+@login_required
 def manage_job():
     job_data, job_columns, job_error = fetch_jobs()
     if job_error:
@@ -258,6 +343,7 @@ def manage_job():
 
 
 @app.route("/delete_job", methods=["DELETE"])
+@login_required
 def api_delete_job():
     job_id = request.json.get("id")
     if not job_id:
@@ -272,6 +358,7 @@ def api_delete_job():
 
 # region DEPARTMENT
 @app.route("/new_department")
+@login_required
 def new_department():
     return render_template("new_department.html")
 
@@ -310,6 +397,7 @@ def new_department():
 
 # app.py
 @app.route("/manage_department")
+@login_required
 def manage_department():
     dept_data, dept_columns, dept_error = fetch_manage_departments()
     emp_data, emp_columns, emp_error = fetch_manage_employees()  # For manager dropdowns
@@ -376,6 +464,7 @@ def manage_department():
 
 
 @app.route("/update_department", methods=["PUT"])
+@login_required
 def api_update_department():
     data = request.json
     dept_id = data.get("dept_id")
@@ -387,6 +476,7 @@ def api_update_department():
 
 
 @app.route("/delete_department", methods=["DELETE"])
+@login_required
 def api_delete_department():
     dept_id = request.json.get("id")
     if not dept_id:
@@ -400,4 +490,5 @@ def api_delete_department():
 
 if __name__ == "__main__":
     setup_database.run_sql_scripts()
+    setup_database.run_create_users_procedure()
     app.run(debug=True)

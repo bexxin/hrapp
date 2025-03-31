@@ -96,4 +96,96 @@
         </div>
     </div>
 </div>
+<br/>
+<!-- Job Accordion -->
+<div class="accordion mb-2" id="jobAccordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingJobs">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#collapseJobs" aria-expanded="true" 
+                    aria-controls="collapseJobs">
+                <span>Jobs</span>
+            </button>
+        </h2>
+        <div id="collapseJobs" class="accordion-collapse collapse show" 
+                aria-labelledby="headingJobs">
+            <div class="accordion-body">
+                {% if job_error %}
+                    <p style="color: red;">{{ job_error }}</p>
+                {% else %}
+                    {% if job_data and job_columns %}
+                        <div class="table-container">
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        {% for name in job_columns %}
+                                            <th>{{ name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in job_data %}
+                                        <tr>
+                                            {% for value in row %}
+                                                <td>{{ value }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>No Jobs data available.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+<!-- USERS Accordion -->
+<div class="accordion mb-2" id="usersAccordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingUsers">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#collapseUsers" aria-expanded="true" 
+                    aria-controls="collapseUsers">
+                <span>Users</span>
+            </button>
+        </h2>
+        <div id="collapseUsers" class="accordion-collapse collapse show" 
+                aria-labelledby="headingUsers">
+            <div class="accordion-body">
+                {% if user_error %}
+                    <p style="color: red;">{{ user_error }}</p>
+                {% else %}
+                    {% if user_data and user_columns %}
+                        <div class="table-container">
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        {% for name in user_columns %}
+                                            <th>{{ name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in user_data %}
+                                        <tr>
+                                            {% for value in row %}
+                                                <td>{{ value }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>No Users data available.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
