@@ -3,7 +3,7 @@
 # region IMPORTS
 import datetime
 from flask import Flask, jsonify, render_template, request, redirect, url_for, session, flash
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
 from setup_database import SECRET_KEY
 from database import (
@@ -24,13 +24,16 @@ from database import (
     fetch_locations,
     update_employee,
     get_user_credentials,
+    add_user,
+    update_user,
+    delete_user,
 )
 import setup_database
 
 # endregion
 
 app = Flask(__name__)
-app.secret_key = SECRET_KEY  # Replace with a secure, random value
+app.secret_key = SECRET_KEY
 
 # region Login - Logout
 
@@ -38,9 +41,9 @@ app.secret_key = SECRET_KEY  # Replace with a secure, random value
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if "user_id" not in session:  # If no user_id in session, user is not logged in
+        if "user_id" not in session:
             flash("You must log in to access this page.", "warning")
-            return redirect(url_for("login"))  # Redirect to the login page
+            return redirect(url_for("login"))
         return f(*args, **kwargs)
 
     return decorated_function
@@ -72,7 +75,7 @@ def login():
             print(f"Error during login: {error}")  # Debugging
             flash("An error occurred. Please try again later.", "danger")
 
-    return render_template("login.html")  # Render login page for GET requests
+    return render_template("login.html")
 
 
 @app.route("/logout")
@@ -296,7 +299,7 @@ def api_update_job():
         job_id = data.get("job_id")
         if not job_id:
             return jsonify({"success": False, "error": "Missing job id"}), 400
-        new_title = data.get("job_title")  # Changed from "new_title" to match frontend
+        new_title = data.get("job_title")
         min_salary = data.get("min_salary")
         max_salary = data.get("max_salary")
 
@@ -400,8 +403,8 @@ def new_department():
 @login_required
 def manage_department():
     dept_data, dept_columns, dept_error = fetch_manage_departments()
-    emp_data, emp_columns, emp_error = fetch_manage_employees()  # For manager dropdowns
-    loc_data, loc_columns, loc_error = fetch_locations()  # For location dropdowns
+    emp_data, emp_columns, emp_error = fetch_manage_employees()
+    loc_data, loc_columns, loc_error = fetch_locations()
 
     emp_data = serialize_employee_data(emp_data)  # Serialize dates
 
@@ -447,8 +450,8 @@ def manage_department():
             "city": row[3],
             "state_province": row[4],
             "country_id": row[5],
-            "country_name": row[6],  # Assuming fetch_locations includes this
-            "region_name": row[7],  # Assuming fetch_locations includes this
+            "country_name": row[6],
+            "region_name": row[7],
         }
         for row in loc_data
     ]
@@ -487,6 +490,89 @@ def api_delete_department():
 
 
 # endregion
+
+
+# Region Users
+@app.route("/new_user", methods=["GET"])
+@login_required
+def new_user_page():
+    return render_template("new_user.html")
+
+
+@app.route("/new_user", methods=["POST"])
+@login_required
+def new_user():
+    data = request.json  # Extract data from the form submission
+    try:
+        username = data["username"]
+        email = data["email"]
+        raw_password = data["password"]  # The raw password entered by the user
+
+        # Hash the password
+        hashed_password = generate_password_hash(raw_password)
+
+        # Save the user to the database
+        result = add_user(username, email, hashed_password)
+
+        if result["success"]:
+            return jsonify({"success": True, "message": "User added successfully!"})
+        else:
+            return jsonify({"success": False, "error": result["error"]})
+
+    except KeyError as e:
+        return jsonify({"success": False, "error": f"Missing field: {e}"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
+@app.route("/manage_user", methods=["GET"])
+@login_required
+def manage_user():
+    # Handle GET request for displaying the page with user data
+    user_data, user_columns, user_error = fetch_users()
+    if user_error:
+        return render_template("manage_user.html", users=[], first_user={}, user_error=user_error)
+
+    users = [
+        {"user_id": row[0], "username": row[1], "email": row[2], "created_at": row[3], "password_hash": row[4]}
+        for row in user_data
+    ]
+
+    first_user = users[0] if users else {}  # Get the first user for form defaults
+    return render_template("manage_user.html", users=users, first_user=first_user, user_error=None)
+
+
+@app.route("/update_user", methods=["POST"])
+@login_required
+def api_update_user():
+    data = request.json
+    user_id = data.get("user_id")
+    username = data.get("username")
+    email = data.get("email")
+
+    if not user_id or not username or not email:
+        return jsonify({"success": False, "error": "Missing required fields."})
+
+    result = update_user(user_id, username, email)
+    return jsonify(result)
+
+
+@app.route("/delete_user", methods=["DELETE"])
+@login_required
+def api_delete_user():
+    data = request.json
+    user_id = data.get("id")
+    print(f"Received data: {data}")
+    print(f"Received id: {user_id}")
+
+    if not user_id:
+        return jsonify({"success": False, "error": "User ID is required."})
+
+    result = delete_user(user_id)
+    return jsonify(result)
+
+
+# Endregion
 
 if __name__ == "__main__":
     setup_database.run_sql_scripts()

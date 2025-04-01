@@ -100,13 +100,13 @@
             </a>
             <ul id="settings" class="sidebar-dropdown list-unstyled collapse">
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="{{ url_for('manage_user') }}" class="sidebar-link">
                         <i class="bi bi-person-gear"></i>
                         <span>Manage Users</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="{{ url_for('new_user') }}" class="sidebar-link">
                         <i class="bi bi-person-plus"></i>
                         <span>Add Users</span>
                     </a>

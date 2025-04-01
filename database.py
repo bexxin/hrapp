@@ -412,3 +412,46 @@ def fetch_users():
     finally:
         cursor.close()
         connection.close()
+
+
+def add_user(username, email, password_hash):
+    try:
+        print("add user called")
+        connection = get_db_connection()  # Establish the database connection
+        cursor = connection.cursor()  # Create a cursor object
+        cursor.callproc("new_user", [username, email, password_hash])  # Call the stored procedure
+        connection.commit()  # Commit the transaction
+        cursor.close()  # Close the cursor
+        connection.close()  # Close the connection
+        return {"success": True, "message": "User added successfully."}  # Return success message
+    except cx_Oracle.Error as error:
+        print(f"Database error: {error}")  # Print the error for debugging
+        return {"success": False, "error": str(error)}  # Return error message
+
+
+def update_user(user_id, username, email):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.callproc("update_user", [user_id, username, email])
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return {"success": True, "message": "User updated successfully."}
+    except cx_Oracle.Error as error:
+        print(f"Database error: {error}")
+        return {"success": False, "error": str(error)}
+
+
+def delete_user(user_id):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.callproc("delete_user", [user_id])
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return {"success": True, "message": "User deleted successfully."}
+    except cx_Oracle.Error as error:
+        print(f"Database error: {error}")
+        return {"success": False, "error": str(error)}

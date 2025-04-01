@@ -1,0 +1,85 @@
+<!-- templates/manage_user.html -->
+{% extends "base.html" %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        {% if user_error %}
+            <p style="color: red;">{{ user_error }}</p>
+        {% else %}
+            {% if users %}
+                <div class="table-container">
+                    <table class="table table-dark table-hover" id="userTable">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="0" title="Click to sort by User ID"><span>User ID</span> <i class="bi bi-arrow-down-up"></i></th>
+                                <th class="sortable" data-sort="1" title="Click to sort by Username"><span>Username</span> <i class="bi bi-arrow-down-up"></i></th>
+                                <th class="sortable" data-sort="2" title="Click to sort by Email"><span>Email</span> <i class="bi bi-arrow-down-up"></i></th>
+                                <th class="sortable" data-sort="3" title="Click to sort by Created At"><span>Created At</span> <i class="bi bi-arrow-down-up"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr class="user-row" data-details='{{ user | tojson | safe }}'>
+                                    <td>{{ user.user_id | default('') }}</td>
+                                    <td>{{ user.username | default('') }}</td>
+                                    <td>{{ user.email | default('') }}</td>
+                                    <td>{{ user.created_at | default('') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div id="userForm" class="mt-3">
+                    <h3>User Details</h3>
+                    <div id="alertContainer" class="mb-3" style="display: none;"></div>
+                    <div class="d-flex justify-content-start gap-2 mb-3">
+                        <button id="editButton" class="btn btn-primary">Edit</button>
+                        <button id="saveButton" class="btn btn-success" style="display: none;">Save</button>
+                        <button id="cancelButton" class="btn btn-secondary" style="display: none;">Cancel</button>
+                        <button id="deleteButton" class="btn btn-danger" style="display: none;">Delete</button>
+                    </div>
+                    <div class="accordion accordion-flush" id="userAccordion">
+                        <!-- User Group -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingUser">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapseUser" aria-expanded="true" 
+                                        aria-controls="collapseUser">
+                                    User
+                                </button>
+                            </h2>
+                            <div id="collapseUser" class="accordion-collapse collapse show" 
+                                    aria-labelledby="headingUser">
+                                <div class="accordion-body">
+                                    <div class="row tight-horizontal">
+                                        <div class="fixed-id">
+                                            <label class="form-label" for="User_ID">User ID:</label>
+                                            <input type="text" class="form-control short-input" id="User_ID" value="{{ first_user.user_id | default('') }}" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="Username">Username:</label>
+                                            <input type="text" class="form-control" id="Username" value="{{ first_user.username | default('') }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row tight-horizontal">
+                                        <div class="fixed-id"></div> <!-- Empty spacer -->
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="Email">Email:</label>
+                                            <input type="text" class="form-control" id="Email" value="{{ first_user.email | default('') }}" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label" for="Created_At">Created At:</label>
+                                            <input type="text" class="form-control" id="Created_At" value="{{ first_user.created_at | default('') }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p>No user data available.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

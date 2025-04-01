@@ -73,6 +73,17 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.log("Department table or form not found");
     }
+
+    // User Table and Form Setup
+    const userTable = document.getElementById("userTable");
+    const userForm = document.getElementById("userForm");
+    if (userTable && userForm) {
+        console.log("User table and form found");
+        setupTable(userTable, userForm, "user");
+    } else {
+        console.log("User table or form not found");
+    }
+
 });
 
 // Function to reset form fields to view mode
@@ -99,8 +110,9 @@ function resetToViewMode(type, initialValues) {
         // Job-specific resets...
     } else if (type === "dept") {
         // Department-specific resets...
+    } else if (type === "user") {
+        // User-specific resets...
     }
-
     // Toggle button visibility
     document.getElementById("saveButton").style.display = "none";
     document.getElementById("cancelButton").style.display = "none";
@@ -213,6 +225,11 @@ function setupTable(table, form, type) {
                     document.getElementById("State_Province").value = details.state_province || "";
                     document.getElementById("Country_Name").value = details.country_name || "";
                     document.getElementById("Region_Name").value = details.region_name || "";
+                } else if (type === "user") {
+                    document.getElementById("User_ID").value = details.user_id || "";
+                    document.getElementById("Username").value = details.username || "";
+                    document.getElementById("Email").value = details.email || "";
+                    document.getElementById("Created_At").value = details.created_at || "";
                 }
             } catch (e) {
                 console.error(`${type} JSON parse error:`, e.message, "Raw data:", row.dataset.details);
@@ -426,6 +443,18 @@ function setupTable(table, form, type) {
                     countryNameInput.value = selectedOption.getAttribute("data-country-name") || "";
                     regionNameInput.value = selectedOption.getAttribute("data-region-name") || "";
                 });
+            } else if (type === "user") {
+                // Unlock fields for editing
+                console.log("Switching to edit mode for user");
+                const usernameInput = document.getElementById("Username");
+                const emailInput = document.getElementById("Email");
+
+                usernameInput.readOnly = false;
+                emailInput.readOnly = false;
+
+                // Ensure ID and Created_At remain locked
+                document.getElementById("User_ID").readOnly = true;
+                document.getElementById("Created_At").readOnly = true;
             }
 
             alertContainer.innerHTML = `
@@ -680,9 +709,61 @@ function setupTable(table, form, type) {
                             </div>
                         `;
                     });
+            } else if (type === "user") {
+                const updatedDetails = {
+                    user_id: document.getElementById("User_ID").value,
+                    username: document.getElementById("Username").value,
+                    email: document.getElementById("Email").value
+                };
+
+                fetch("/update_user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updatedDetails),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alertContainer.style.display = "block";
+                        if (data.success) {
+                            alertContainer.innerHTML = `
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    User updated successfully!
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            `;
+                            selectedRow.dataset.details = JSON.stringify(updatedDetails);
+                        } else {
+                            alertContainer.innerHTML = `
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    Error updating user: ${data.error}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            `;
+                        }
+
+                        // Reset fields to view mode
+                        document.getElementById("Username").readOnly = true;
+                        document.getElementById("Email").readOnly = true;
+
+                        saveButton.style.display = "none";
+                        cancelButton.style.display = "none";
+                        deleteButton.style.display = "none";
+                        editButton.style.display = "inline-block";
+                    })
+                    .catch(error => {
+                        console.error("Save error:", error);
+                        alertContainer.style.display = "block";
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                Error: ${error}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `;
+                    });
             }
         });
-
 
 
         if (deleteButton) {
@@ -716,6 +797,9 @@ function setupTable(table, form, type) {
                 } else if (type === "dept") {
                     idValue = details.department_id || details[0]
                     apiEndpoint = "/delete_department";
+                } else if (type === "user") {
+                    idValue = details.user_id || details[0];
+                    apiEndpoint = "/delete_user"; // Update endpoint for user deletion
                 }
 
 
@@ -832,6 +916,14 @@ function setupTable(table, form, type) {
                 cancelButton.style.display = "none";
                 deleteButton.style.display = "none";
                 editButton.style.display = "inline-block";
+
+                alertContainer.innerHTML = `
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        Edit mode cancelled
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+                alertContainer.style.display = "block";
             } else if (type === "job") {
                 const jobIdInput = document.getElementById("Job_ID");
                 const jobTitleInput = document.getElementById("Job_Title");
@@ -849,6 +941,14 @@ function setupTable(table, form, type) {
                 cancelButton.style.display = "none";
                 deleteButton.style.display = "none";
                 editButton.style.display = "inline-block";
+
+                alertContainer.innerHTML = `
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        Edit mode cancelled
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+                alertContainer.style.display = "block";
             } else if (type === "dept") {
                 const deptIdInput = document.getElementById("Department_ID");
                 const deptNameInput = document.getElementById("Department_Name");
@@ -901,6 +1001,30 @@ function setupTable(table, form, type) {
                 }
 
                 // Add button visibility toggling logic here
+                saveButton.style.display = "none";
+                cancelButton.style.display = "none";
+                deleteButton.style.display = "none";
+                editButton.style.display = "inline-block";
+
+                alertContainer.innerHTML = `
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        Edit mode cancelled
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+                alertContainer.style.display = "block";
+            } else if (type === "user") {
+                console.log("Switching to view mode for user");
+
+                // Resetting readonly fields
+                document.getElementById("Username").readOnly = true;
+                document.getElementById("Email").readOnly = true;
+
+                // Ensuring ID and Created_At stay readonly
+                document.getElementById("User_ID").readOnly = true;
+                document.getElementById("Created_At").readOnly = true;
+
+                // Button visibility toggling
                 saveButton.style.display = "none";
                 cancelButton.style.display = "none";
                 deleteButton.style.display = "none";

@@ -446,7 +446,9 @@ a.sidebar-link:hover {
 #jobForm .form-label,
 #hireEmployeeForm .form-label,
 #newJobForm .form-label,
-#deptForm .form-label {
+#deptForm .form-label,
+#newUserForm .form-label,
+#userForm .form-label {
     color: #FFF;
     margin-top: 0.75rem;
     margin-bottom: 0.25rem;
@@ -456,7 +458,9 @@ a.sidebar-link:hover {
 .light-mode #jobForm .form-label,
 .light-mode #hireEmployeeForm .form-label,
 .light-mode #newJobForm .form-label,
-.light-mode #deptForm .form-label {
+.light-mode #deptForm .form-label,
+.light-mode #newUserForm .form-label,
+.light-mode #userForm .form-label {
     color: #212529 !important;
 }
 
