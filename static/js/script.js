@@ -534,6 +534,42 @@ function setupTable(table, form, type) {
                 deleteButton.style.display = "none";
                 editButton.style.display = "inline-block";
 
+                const empdata = {
+                    employee_id: idInput.value,
+                    first_name: firstNameInput.value,
+                    last_name: lastNameInput.value,
+                    email: emailInput.value,
+                    phone: phoneInput.value,
+                    job_id: jobIdInput.value,
+                    salary: salaryInput.value,
+                    manager_id: managerIdInput.value,
+                    department_id: deptIdInput.value
+                  };
+                  
+                  console.log("Sending employee update:", empdata);
+                  
+                  fetch("/update_employee", {
+                    method: "PUT",
+                    headers: {
+                      "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(empdata)
+                  })
+                    .then((response) => response.json())
+                    .then((data) => {
+                      console.log("Server response:", data);
+                      if (data.success) {
+                        alert("Employee successfully updated in the database.");
+                      } else {
+                        alert("Error: " + data.error);
+                      }
+                    })
+                    .catch((error) => {
+                      console.error("Request failed:", error);
+                      alert("Something went wrong during the update.");
+                    });
+                  
+
                 alertContainer.innerHTML = `
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         Updated successfully
@@ -639,6 +675,7 @@ function setupTable(table, form, type) {
                 };
 
                 fetch('/update_department', {
+                    
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -650,6 +687,7 @@ function setupTable(table, form, type) {
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
                         return response.json();
+                        
                     })
                     .then(data => {
                         alertContainer.style.display = "block";

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Add New Department{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <h2>Add New Department</h2>
+    <div id="alertContainer" class="mb-3" style="display: none;"></div>
+
+    <form id="newDepartmentForm" class="mt-3">
+        <div class="accordion accordion-flush" id="newDeptAccordion">
+            <!-- Department Details -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingDept">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseDept" aria-expanded="true" aria-controls="collapseDept">
+                        Department Details
+                    </button>
+                </h2>
+                <div id="collapseDept" class="accordion-collapse collapse show" aria-labelledby="headingDept">
+                    <div class="accordion-body">
+                        <div class="row tight-horizontal">
+                            <div class="col-md-3">
+                                <label class="form-label" for="Department_Name">Department Name:</label>
+                                <input type="text" class="form-control" id="Department_Name" name="department_name"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manager Group -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingManager">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseManager" aria-expanded="false" aria-controls="collapseManager">
+                        Manager
+                    </button>
+                </h2>
+                <div id="collapseManager" class="accordion-collapse collapse" aria-labelledby="headingManager">
+                    <div class="accordion-body">
+                        <div class="row tight-horizontal">
+                            <div class="col-md-3">
+                                <label class="form-label" for="Manager_ID_select">Assigned Manager:</label>
+                                <select class="form-control" id="Manager_ID_select" name="manager_id">
+                                    <option value="">Select Manager</option>
+                                    {% for emp in emp_data %}
+                                    <option value="{{ emp[0] }}" data-first-name="{{ emp[1] }}"
+                                        data-last-name="{{ emp[2] }}">{{ emp[0] }}- {{emp[1]}} {{emp[2]}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Group -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingLocation">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseLocation" aria-expanded="false" aria-controls="collapseLocation">
+                        Location
+                    </button>
+                </h2>
+                <div id="collapseLocation" class="accordion-collapse collapse" aria-labelledby="headingLocation">
+                    <div class="accordion-body">
+                        <div class="row tight-horizontal">
+                            <div class="col-md-3">
+                                <label class="form-label" for="City_Select">City:</label>
+                                <select class="form-control" id="City_Select" name="city">
+                                    <option value="">Select City</option>
+                                    {% for loc in loc_data %}
+                                    <option value="{{ loc[0] }}">{{ loc[3]}},{{ loc[4] }}</option> 
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-start gap-2 mt-4">
+            <button type="submit" class="btn btn-success">Add Department</button>
+            <button type="reset" class="btn btn-secondary">Reset</button>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    console.log("script executed");
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("newDepartmentForm");
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();  // ✅ Prevent form from reloading page
+
+            // ✅ Grab form values
+            const departmentName = document.getElementById("Department_Name").value.trim();
+            const managerId = document.getElementById("Manager_ID_select").value || null;
+            const locationId = document.getElementById("City_Select").value || null;
+
+            const payload = {
+                department_name: departmentName,
+                manager_id: managerId,
+                location_id: locationId
+            };
+
+            console.log("Sending POST:", payload);
+
+            fetch("/new_department/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log("Server response:", data);
+                alert(data.message || "Department created!");
+            })
+            .catch(err => {
+                console.error("POST failed:", err);
+                alert("Something went wrong.");
+            });
+        });
+    });
+</script>
+
+{% endblock %}

@@ -27,6 +27,7 @@ from database import (
     add_user,
     update_user,
     delete_user,
+    create_department
 )
 import setup_database
 
@@ -363,8 +364,27 @@ def api_delete_job():
 @app.route("/new_department")
 @login_required
 def new_department():
-    return render_template("new_department.html")
+    employee_data, _ , emp_error = fetch_employees()
+    if emp_error:
+        employee_data=[]
+    location_data,_,loc_error= fetch_locations()
+    if loc_error:
+        location_data=[]
+    return render_template("new_department.html", emp_data=employee_data, loc_data=location_data)
 
+
+@app.route("/new_department/submit", methods=["POST"])
+@login_required
+def submit_new_dept():
+    data=request.get_json()
+    department_name=data.get("department_name")
+    manager_id=data.get("manager_id")
+    location_id=data.get("location_id")
+
+    #dept_id generated automatically in sp.
+    create_department(department_name,manager_id,location_id)
+
+    return jsonify(({"success": True, "message": "Department created successfully."}))
 
 # @app.route("/manage_department")
 # def manage_department():

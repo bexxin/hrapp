@@ -166,8 +166,9 @@ def fetch_manage_employees():
             FROM
                     hr_employees e
                 JOIN hr_jobs        j ON j.job_id = e.job_id
-                JOIN hr_departments d ON d.department_id = e.department_id
+                LEFT JOIN hr_departments d ON d.department_id = e.department_id 
         """
+        #left join used to ensure all employees included even without assigned deparment.
         cursor.execute(query)
         table_data = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
@@ -274,7 +275,7 @@ def fetch_manage_departments():
                 r.region_id AS reg_id,
                 r.region_name
             FROM hr_departments d
-            JOIN hr_employees e
+            LEFT JOIN hr_employees e
                 ON e.employee_id = d.manager_id
             JOIN hr_locations l
                 ON d.location_id = l.location_id
@@ -283,6 +284,7 @@ def fetch_manage_departments():
             JOIN hr_regions r
                 ON c.region_id = r.region_id
         """
+        # left join to ensure all departments even those without manager id.
         cursor.execute(query)
         table_data = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
@@ -298,12 +300,13 @@ def fetch_manage_departments():
         )
 
 
-def create_department(dept_id, dept_name, manager_id=None, location_id=None):
+def create_department(dept_name, manager_id=None, location_id=None):
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
 
-        cursor.callproc("create_department", [dept_id, dept_name, manager_id, location_id])
+        cursor.callproc("create_department_sp", [dept_name, manager_id, location_id])
+        print(dept_name + "sent to backend")
         connection.commit()
         cursor.close()
         connection.close()

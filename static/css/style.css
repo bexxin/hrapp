@@ -442,6 +442,7 @@ a.sidebar-link:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+#newDepartmentForm .form-label,
 #employeeForm .form-label,
 #jobForm .form-label,
 #hireEmployeeForm .form-label,
@@ -454,6 +455,7 @@ a.sidebar-link:hover {
     margin-bottom: 0.25rem;
 }
 
+.light-mode #newDepartmentForm .form-label,
 .light-mode #employeeForm .form-label,
 .light-mode #jobForm .form-label,
 .light-mode #hireEmployeeForm .form-label,

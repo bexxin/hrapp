@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 if platform.system() == "Windows":
-    # cx_Oracle.init_oracle_client(lib_dir=r"C:/instantclient_23_7/instantclient_23_7")
-    cx_Oracle.init_oracle_client(lib_dir=r"C:\instantclient_23_7")
+    cx_Oracle.init_oracle_client(lib_dir=r"C:/instantclient_23_7/instantclient_23_7")
+    #cx_Oracle.init_oracle_client(lib_dir=r"C:\instantclient_23_7")
 elif platform.system() == "Linux":
     cx_Oracle.init_oracle_client(lib_dir="/opt/oracle/instantclient_23_7")
 else:
